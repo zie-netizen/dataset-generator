@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Credit Scoring Dataset Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b2545;--navy2:#13315c;--teal:#0f8b8d;--teal-l:#e3f3f3;--gold:#c99a2e;--gold-l:#fbf1dc;--ink:#16202c;--mut:#5b6878;--line:#dfe4ea;--bg:#f4f6f9;--card:#fff;--bad:#b4232c;--good:#167a4a}
+*{box-sizing:border-box}
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.45}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px}
+header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hbar{display:flex;align-items:center;gap:16px;padding:12px 22px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;margin-right:auto}
+.brand b{font-size:16px;letter-spacing:.2px}
+.brand span{font-size:12px;color:#b9c6d8}
+.brand b i{font-style:normal;color:var(--gold)}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.08);padding:3px;border-radius:8px}
+.tabs button{background:none;border:0;color:#cfd9e6;padding:7px 14px;border-radius:6px;font:inherit;cursor:pointer}
+.tabs button.on{background:#fff;color:var(--navy);font-weight:600}
+.btn{border:1px solid var(--line);background:#fff;color:var(--navy);padding:8px 14px;border-radius:7px;font:inherit;font-weight:500;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.primary:disabled{opacity:.6;cursor:wait}
+.btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+.notice{background:var(--gold-l);border-bottom:1px solid #ecd9a8;color:#5a4614;padding:7px 22px;font-size:12.5px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:22px;max-width:1320px;margin:0 auto;padding:20px 22px 80px}
+nav#nav{position:sticky;top:96px;align-self:start;max-height:calc(100vh - 120px);overflow:auto;display:flex;flex-direction:column;gap:2px}
+nav#nav a{display:flex;gap:10px;align-items:center;padding:7px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:13px}
+nav#nav a:hover{background:#e8edf3}
+.num{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:600;margin-right:8px}
+nav .num{margin-right:0;background:var(--teal)}
+.side-actions{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.side-actions label.btn{text-align:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:18px;scroll-margin-top:100px}
+.card h2{margin:0 0 4px;font-size:18px;color:var(--navy);display:flex;align-items:center}
+.card h3{margin:0 0 8px;font-size:16px;color:var(--navy);display:flex;align-items:center}
+.intro{color:var(--mut);margin:0 0 14px}
+.field{border-top:1px solid var(--line);padding:14px 0}
+.fhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.fhead label{font-weight:600;color:var(--navy2)}
+.reset{background:none;border:0;color:var(--teal);font:inherit;font-size:12px;cursor:pointer;padding:2px 4px}
+.reset:hover{text-decoration:underline}
+.help{background:#f7f9fb;border-left:3px solid var(--teal);padding:7px 11px;margin:6px 0 9px;border-radius:0 6px 6px 0;font-size:12.8px;color:#3b4756}
+.help p{margin:2px 0}
+.help .def{color:var(--mut)}
+input[type=number],input[type=text],select{font:inherit;padding:7px 9px;border:1px solid #cdd5df;border-radius:6px;background:#fff;width:220px;max-width:100%}
+input:focus,select:focus{outline:2px solid rgba(15,139,141,.35);border-color:var(--teal)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 12px}
+.grid.small{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
+.cell{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mut)}
+.cell input{width:100%}
+.cell .role{font-style:italic}
+.sum{font-size:12px;color:var(--good);margin-top:6px}
+.sum.warn{color:#9a6a00}
+td.sum{text-align:center;font-family:'IBM Plex Mono',monospace}
+.tblwrap{overflow:auto;max-width:100%}
+table.mat,table.qtbl{border-collapse:collapse}
+table.mat th,table.mat td,table.qtbl th,table.qtbl td{padding:4px 6px;border-bottom:1px solid #eef1f4;text-align:left;font-size:12.5px}
+table.mat thead th{color:var(--mut);font-weight:500;white-space:nowrap}
+table.mat tbody th{font-weight:500;white-space:nowrap;color:var(--navy2)}
+table.mat input{width:84px;padding:5px 6px}
+table.qtbl input{width:90px;padding:5px 6px}
+.chk{display:flex;gap:8px;align-items:center;font-weight:500}
+.chk input{width:18px;height:18px;accent-color:var(--teal)}
+/* results */
+.rwrap{max-width:1320px;margin:0 auto;padding:20px 22px 80px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:10px;padding:12px 14px}
+.kpi .k{font-size:12px;color:var(--mut)}
+.kpi .v{font-size:21px;font-weight:700;color:var(--navy)}
+.kpi .v small{font-size:12px;font-weight:500;color:var(--mut)}
+.badtxt{color:var(--bad)}
+.dlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 16px}
+.dlbar .lbl{font-weight:600;color:var(--navy);margin-right:4px}
+.meta{color:var(--mut);font-size:12px;margin-bottom:10px}
+.warnbox{background:var(--gold-l);border:1px solid #ecd9a8;padding:8px 12px;border-radius:8px;margin-bottom:8px;color:#5a4614}
+.rtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.rtabs button{background:none;border:0;padding:9px 14px;font:inherit;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent}
+.rtabs button.on{color:var(--navy);border-bottom-color:var(--gold);font-weight:600}
+table.rt{border-collapse:collapse;width:100%;font-size:12.5px;background:#fff}
+table.rt th{background:var(--navy);color:#fff;font-weight:500;text-align:left;padding:6px 8px;white-space:nowrap;position:sticky;top:0}
+table.rt td{padding:5px 8px;border-bottom:1px solid #eef1f4;white-space:nowrap}
+table.rt tbody tr:nth-child(even) td{background:#fafbfc}
+td.bad{color:var(--bad);font-weight:600}
+td.good{color:var(--good);font-weight:600}
+.preview{max-height:560px;border:1px solid var(--line);border-radius:8px}
+td.outl{background:var(--gold-l)!important;font-weight:600;color:#7a5500}
+td.miss{background:var(--teal-l)!important;color:var(--teal);text-align:center}
+h4{margin:14px 0 6px;font-size:13.5px;color:var(--navy2)}
+.note{color:var(--mut);margin:4px 0 8px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.25s;pointer-events:none;z-index:50;max-width:90vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;inset:0;background:rgba(11,37,69,.45);display:grid;place-items:center;z-index:60}
+.modal[hidden]{display:none}
+.modal .box{background:#fff;border-radius:12px;padding:20px 22px;max-width:420px}
+.modal .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.start{background:var(--teal-l);border:1px solid #bfe2e2;border-radius:10px;padding:12px 16px;margin-bottom:18px;color:#21494a}
+.start ol{margin:6px 0 0 18px;padding:0}
+@media (max-width:860px){.layout{grid-template-columns:1fr}nav#nav{position:static;max-height:none;flex-direction:row;flex-wrap:wrap}nav#nav a{font-size:12px;padding:5px 8px}.side-actions{flex-direction:row;flex-wrap:wrap;border:0}header{position:static}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="brand"><b>Synthetic Credit Scoring <i>Dataset Generator</i></b><span>Configurable version of the BDA / Oportunidade case-study generator</span></div>
+    <div class="tabs"><button data-view="settings" class="on">Settings</button><button data-view="results">Results</button></div>
+    <button class="btn primary" id="btnGen">Generate dataset</button>
+  </div>
+  <div class="notice">Synthetic data for teaching and research only. Generated records are fictional and must not be presented as real customer or bank data.</div>
+</header>
+
+<div id="viewSettings">
+  <div class="layout">
+    <aside>
+      <nav id="nav"></nav>
+      <div class="side-actions">
+        <button class="btn" data-dl="settings">Save settings (.json)</button>
+        <label class="btn">Load settings (.json)<input type="file" id="fileIn" accept=".json,application/json" hidden></label>
+        <button class="btn" id="btnReset">Reset all to defaults</button>
+      </div>
+    </aside>
+    <main>
+      <div class="start"><b>How to use</b>
+        <ol><li>Work through the sections. Every field explains what it controls and how to enter it, and shows the case-study default.</li>
+        <li>Leave any field as it is to keep the original case-study behaviour. Use “↺ default” to undo a single field.</li>
+        <li>Press <b>Generate dataset</b>, check the report and validation results, then download the files.</li></ol></div>
+      <div id="form"></div>
+    </main>
+  </div>
+</div>
+
+<div id="viewResults" hidden>
+  <div class="rwrap">
+    <div id="noRes" class="card"><h3>No dataset yet</h3><p class="note">Adjust the settings, then press <b>Generate dataset</b>.</p></div>
+    <div id="resBody" hidden>
+      <div class="kpis" id="kpis"></div>
+      <div id="warn"></div>
+      <div class="meta" id="meta"></div>
+      <div class="dlbar"><span class="lbl">Download</span>
+        <button class="btn primary" data-dl="data">Dataset with issues (.csv)</button>
+        <button class="btn" data-dl="clean">Clean dataset (.csv)</button>
+        <button class="btn" data-dl="log">Anomaly log (.csv)</button>
+        <button class="btn" data-dl="report">Report (.md)</button>
+        <button class="btn" data-dl="settings">Settings (.json)</button>
+      </div>
+      <div class="rtabs"><button data-rtab="report" class="on">Summary &amp; validation report</button><button data-rtab="preview">Data preview</button></div>
+      <div class="rpane" id="r_report"></div>
+      <div class="rpane" id="r_preview" hidden></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="confirm" hidden><div class="box"><b>Reset all settings?</b><p class="note">Every field returns to the original case-study default. Save your settings first if you want to keep them.</p><div class="row"><button class="btn" id="cfNo">Cancel</button><button class="btn primary" id="cfYes">Reset</button></div></div></div>
+<div id="toast"></div>
+
+<script>
+// ======================================================================
+// Synthetic credit-scoring dataset engine (configurable port of the
+// BDA / Oportunidade Python generator). No DOM code in this file.
+// ======================================================================
+
+const CATS = {
+  region: ['N', 'NE', 'SE', 'S', 'CW'],
+  race: ['W', 'AFRO', 'MIX', 'IND', 'ASIA'],
+  city: ['METRO', 'URBAN', 'SEMI', 'RURAL'],
+  neigh: ['HIGH', 'MID', 'LOW', 'FAV'],
+  gender: ['M', 'F', 'NB'],
+  edu: ['PRI', 'SEC', 'TER'],
+  emp: ['FORMAL', 'INFORMAL', 'SELF', 'UNEMP'],
+  plan: ['PRE', 'POST', 'PREM'],
+  channel: ['APP', 'WEB', 'PARTNER'],
+};
+
+const COLS = ['application_id', 'timestamp', 'applicant_age', 'applicant_gender', 'applicant_race', 'applicant_region',
+  'applicant_city_type', 'neighborhood_type', 'income_monthly', 'employment_status', 'credit_score_traditional',
+  'education_level', 'social_media_score', 'mobile_plan_type', 'utility_payments_12m', 'previous_defaults',
+  'digital_footprint_score', 'application_channel', 'loan_amount_requested', 'approval_decision', 'ai_recommendation',
+  'decision_confidence', 'explanation_provided', 'human_reviewed', 'human_override', 'analyst_id',
+  'analyst_experience_months', 'complaint_filed', 'default_within_12m', 'shap_fairness_score', 'disparate_impact_ratio'];
+
+// numeric columns that can receive outliers
+const NUM_COLS = {
+  applicant_age: { int: true, log: false, ph: 999 },
+  income_monthly: { int: true, log: true, ph: 999999 },
+  credit_score_traditional: { int: true, log: false, ph: 9999 },
+  social_media_score: { int: true, log: false, ph: 999 },
+  utility_payments_12m: { int: true, log: false, ph: 99 },
+  previous_defaults: { int: true, log: false, ph: 99 },
+  digital_footprint_score: { int: true, log: false, ph: 999 },
+  loan_amount_requested: { int: true, log: true, ph: 9999999 },
+  decision_confidence: { int: false, log: false, ph: 999 },
+  shap_fairness_score: { int: false, log: false, ph: 999 },
+  analyst_experience_months: { int: true, log: false, ph: 9999 },
+};
+
+const MISSING = { missing: true }; // sentinel for injected missing cells
+
+const DEFAULTS = {
+  basics: { n: 15000, seed: 20251115, year: 2025, bankName: 'Banco Digital Aurora', systemName: 'Oportunidade', idPrefix: 'BDA', currency: 'R$' },
+  labels: {
+    region: { N: 'North', NE: 'Northeast', SE: 'Southeast', S: 'South', CW: 'Central-West' },
+    race: { W: 'White', AFRO: 'Afro-Brazilian', MIX: 'Mixed', IND: 'Indigenous', ASIA: 'Asian' },
+    city: { METRO: 'Metropolitan', URBAN: 'Urban', SEMI: 'Semi-urban', RURAL: 'Rural' },
+    neigh: { HIGH: 'High-income', MID: 'Middle-class', LOW: 'Low-income', FAV: 'Favela' },
+    gender: { M: 'Male', F: 'Female', NB: 'Non-binary' },
+    edu: { PRI: 'Primary', SEC: 'Secondary', TER: 'Tertiary' },
+    emp: { FORMAL: 'Formal', INFORMAL: 'Informal', SELF: 'Self-employed', UNEMP: 'Unemployed' },
+    plan: { PRE: 'Prepaid', POST: 'Postpaid', PREM: 'Premium' },
+    channel: { APP: 'Mobile app', WEB: 'Web', PARTNER: 'Partner' },
+  },
+  pop: {
+    region: { N: 8, NE: 25, SE: 42, S: 15, CW: 10 },
+    raceByRegion: {
+      N: { W: 22, AFRO: 9, MIX: 63.5, IND: 4, ASIA: 1.5 },
+      NE: { W: 30, AFRO: 16, MIX: 51.5, IND: 1, ASIA: 1.5 },
+      SE: { W: 52, AFRO: 14, MIX: 31.7, IND: 0.5, ASIA: 1.8 },
+      S: { W: 72, AFRO: 7, MIX: 18.5, IND: 1, ASIA: 1.5 },
+      CW: { W: 42, AFRO: 10, MIX: 43, IND: 2, ASIA: 3 },
+    },
+    cityByRegion: {
+      N: { METRO: 22, URBAN: 38, SEMI: 20, RURAL: 20 },
+      NE: { METRO: 30, URBAN: 38, SEMI: 18, RURAL: 14 },
+      SE: { METRO: 50, URBAN: 34, SEMI: 11, RURAL: 5 },
+      S: { METRO: 30, URBAN: 44, SEMI: 15, RURAL: 11 },
+      CW: { METRO: 28, URBAN: 46, SEMI: 14, RURAL: 12 },
+    },
+    neighByCity: {
+      METRO: { HIGH: 17, MID: 38, LOW: 28, FAV: 17 },
+      URBAN: { HIGH: 12, MID: 40, LOW: 38, FAV: 10 },
+      SEMI: { HIGH: 6, MID: 35, LOW: 55, FAV: 4 },
+      RURAL: { HIGH: 3, MID: 27, LOW: 70, FAV: 0 },
+    },
+    neighRaceMult: {
+      W: { HIGH: 1.45, MID: 1.15, LOW: 0.8, FAV: 0.5 },
+      AFRO: { HIGH: 0.4, MID: 0.75, LOW: 1.25, FAV: 2.4 },
+      MIX: { HIGH: 0.6, MID: 0.95, LOW: 1.15, FAV: 1.3 },
+      IND: { HIGH: 0.3, MID: 0.6, LOW: 1.5, FAV: 1.5 },
+      ASIA: { HIGH: 1.8, MID: 1.2, LOW: 0.7, FAV: 0.35 },
+    },
+    gender: { M: 47.5, F: 50.5, NB: 2 },
+    age: { min: 18, max: 75, youngShare: 70, youngMean: 32, youngSd: 8.5, oldMean: 50, oldSd: 10 },
+  },
+  edu: {
+    share: { PRI: 17, SEC: 47, TER: 36 },
+    neigh: { HIGH: 0.6, MID: 0.18, LOW: -0.24, FAV: -0.48 },
+    race: { W: 0.15, AFRO: -0.18, MIX: -0.10, IND: -0.30, ASIA: 0.45 },
+    region: { N: -0.15, NE: -0.15, SE: 0.10, S: 0.10, CW: 0 },
+    city: { METRO: 0.15, URBAN: 0.05, SEMI: -0.10, RURAL: -0.30 },
+    over60: -0.35, under23: -0.25,
+  },
+  emp: {
+    terms: {
+      base: { FORMAL: -0.10, INFORMAL: -0.45, SELF: -1.15, UNEMP: -1.55 },
+      edu: { FORMAL: 0.60, INFORMAL: -0.40, SELF: 0.10, UNEMP: -0.35 },
+      u24: { FORMAL: -0.40, INFORMAL: 0, SELF: 0, UNEMP: 0.55 },
+      prime: { FORMAL: 0.30, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      o35: { FORMAL: 0, INFORMAL: 0, SELF: 0.25, UNEMP: 0 },
+      o60: { FORMAL: -0.50, INFORMAL: 0.30, SELF: 0, UNEMP: 0 },
+    },
+    race: {
+      W: { FORMAL: 0, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      AFRO: { FORMAL: -0.25, INFORMAL: 0.20, SELF: 0, UNEMP: 0.20 },
+      MIX: { FORMAL: -0.10, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      IND: { FORMAL: 0, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      ASIA: { FORMAL: 0, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+    },
+    region: {
+      N: { FORMAL: -0.15, INFORMAL: 0.35, SELF: 0, UNEMP: 0.20 },
+      NE: { FORMAL: -0.15, INFORMAL: 0.35, SELF: 0, UNEMP: 0.25 },
+      SE: { FORMAL: 0.25, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      S: { FORMAL: 0.25, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      CW: { FORMAL: 0.25, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+    },
+    city: {
+      METRO: { FORMAL: 0.25, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      URBAN: { FORMAL: 0.10, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      SEMI: { FORMAL: -0.10, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      RURAL: { FORMAL: -0.45, INFORMAL: 0.50, SELF: 0.35, UNEMP: 0.10 },
+    },
+    neigh: {
+      HIGH: { FORMAL: 0.20, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      MID: { FORMAL: 0, INFORMAL: 0, SELF: 0, UNEMP: 0 },
+      LOW: { FORMAL: 0, INFORMAL: 0.35, SELF: 0, UNEMP: 0 },
+      FAV: { FORMAL: -0.30, INFORMAL: 0.35, SELF: 0, UNEMP: 0.35 },
+    },
+  },
+  income: {
+    median: 2900, min: 400, max: 80000, edu: 0.38, ageGrowth: 0.40, ageDecline: 0.008, noise: 0.55, noiseSelf: 0.75,
+    emp: { FORMAL: 0.10, INFORMAL: -0.35, SELF: -0.05, UNEMP: -1.10 },
+    neigh: { HIGH: 0.55, MID: 0.10, LOW: -0.20, FAV: -0.40 },
+    region: { N: -0.12, NE: -0.20, SE: 0.12, S: 0.10, CW: 0.12 },
+    city: { METRO: 0.12, URBAN: 0, SEMI: -0.08, RURAL: -0.20 },
+    race: { W: 0, AFRO: -0.15, MIX: -0.08, IND: -0.20, ASIA: 0.10 },
+    gender: { M: 0, F: -0.12, NB: -0.05 },
+  },
+  alt: {
+    plan: { postBase: -0.60, postInc: 0.90, premBase: -2.30, premInc: 1.50, premHigh: 0.30, edu: 0.15 },
+    ageRef: 35, ageYoungRate: 0.25, ageOldRate: 0.40,
+    social: { base: 47, inc: 10, edu: 0, ageW: 1, affinity: 9, noise: 11,
+      plan: { PRE: -2, POST: 0.5, PREM: 4 }, city: { METRO: 3, URBAN: 1, SEMI: -2, RURAL: -6 }, neigh: { HIGH: 3, MID: 1, LOW: -1, FAV: -3 } },
+    digital: { base: 50, inc: 6, edu: 3, ageW: 0.6, affinity: 8, noise: 9,
+      plan: { PRE: -4, POST: 3, PREM: 8 }, city: { METRO: 2, URBAN: 0, SEMI: -3, RURAL: -7 }, neigh: { HIGH: 4, MID: 1, LOW: -3, FAV: -8 } },
+  },
+  credit: {
+    repayInc: 0.15,
+    utilMonths: 12, utilBase: 1.9, utilRepay: 0.75, utilInc: 0.30,
+    utilEmp: { FORMAL: 0.3, INFORMAL: -0.2, SELF: 0, UNEMP: -0.8 },
+    prevBase: -1.90, prevRepay: -0.70, prevInc: -0.15, prevAge30: 0.15, prevMax: 5,
+    prevEmp: { FORMAL: 0, INFORMAL: 0.20, SELF: 0, UNEMP: 0.50 },
+    scoreBase: 585, scoreRepay: 92, scoreInc: 45, scorePrev: -55, scoreUtil: 9, scoreAge: 0.9, scoreNoise: 38, scoreMin: 100, scoreMax: 980,
+    scoreEmp: { FORMAL: 18, INFORMAL: -15, SELF: 0, UNEMP: -40 },
+  },
+  loan: { median: 5500, incElast: 0.65, noise: 0.75, min: 500, max: 150000, round: 50 },
+  channel: { appDigital: 0.50, appYoung: 0.30, webBase: -0.90, webDigital: -0.10, partnerBase: -1.40, partnerDigital: -0.40, partnerNonUrban: 0.50, partnerFavela: 0.30 },
+  time: {
+    month: [1.0, 0.85, 1.0, 0.92, 1.05, 0.95, 0.97, 1.0, 0.97, 1.05, 1.25, 1.12],
+    dow: [1.15, 1.2, 1.15, 1.1, 1.0, 0.55, 0.40],
+    hour: [0.6, 0.3, 0.2, 0.15, 0.15, 0.25, 0.5, 1.0, 1.8, 2.6, 3.0, 3.2, 3.0, 2.7, 2.7, 2.8, 2.8, 2.6, 2.8, 3.2, 3.4, 3.0, 2.0, 1.1],
+  },
+  ai: {
+    legit: { score: 1.20, prev: -0.75, util: 0.30, lti: -0.38, income: 0.35, emp: { FORMAL: 0.30, INFORMAL: -0.30, SELF: -0.05, UNEMP: -0.85 } },
+    proxy: { digital: 0.60, social: 0.45, plan: { PRE: -0.30, POST: 0.25, PREM: 0.75 },
+      neigh: { HIGH: 0.65, MID: 0.15, LOW: -0.25, FAV: -0.55 }, region: { N: -0.15, NE: -0.12, SE: 0.05, S: 0.05, CW: 0 } },
+    bias: {
+      womenAge: 40, women: -0.35,
+      womenRace: { W: 0, AFRO: -0.40, MIX: -0.15, IND: -0.15, ASIA: 0 },
+      womenNeigh: { HIGH: 0, MID: 0, LOW: -0.10, FAV: -0.10 },
+      tripleRace: 'AFRO', tripleNeigh: 'FAV', triple: -0.15,
+      nonBinary: -0.20, youngAge: 22, young: -0.30, oldAge: 60, old: -0.25,
+    },
+    noise: 0.85, confScale: 2.8,
+    targets: { overall: 34, refRace: 'W', race: { W: 46, AFRO: 18, MIX: '', IND: '', ASIA: 43 }, freeWeight: { W: 1, AFRO: 1, MIX: 1, IND: 0.6, ASIA: 1 } },
+  },
+  review: {
+    share: 2.1, fastLoan: 1500, fastConf: 80,
+    base: 0.25, border: 3.0, strongScore: 700, strongMult: 2.2, weakScore: 600, weakMult: 2.0, largeLoan: 20000, largeMult: 1.5,
+    analysts: 20, expMin: 4, expMax: 174, minPerAnalyst: 5, effSd: 0.30,
+    highN: 3, highMinExp: 30, highEff: 1.2, lowN: 2, lowEff: -1.2,
+    targetOverride: 14, wExp: 0.6, wStrongRej: 1.5, cleanScore: 650, wCleanRej: 0.9, wWeakAppr: 1.1, lowConf: 65, wLowConf: 0.5,
+  },
+  expl: {
+    base: -1.60, approved: 1.20, reviewed: 1.60, women: -0.15, noise: 0.35,
+    edu: { PRI: -0.25, SEC: 0, TER: 0.45 },
+    race: { W: 0.35, AFRO: -0.45, MIX: -0.20, IND: -0.50, ASIA: 0.20 },
+    neigh: { HIGH: 0.30, MID: 0.10, LOW: -0.10, FAV: -0.40 },
+    channel: { APP: 0.20, WEB: 0, PARTNER: -0.35 },
+  },
+  complaint: {
+    base: -5.2, rejected: 2.3, noExpl: 0.6, qualScore: 700, qualRej: 0.9, women: 0.20, overrideRej: 0.4, noise: 0.35,
+    race: { W: 0, AFRO: 0.50, MIX: 0.25, IND: 0.35, ASIA: 0 },
+    neigh: { HIGH: 0, MID: 0, LOW: 0, FAV: 0.25 },
+  },
+  def: {
+    target: 11.4, score: -0.85, prev: 0.45, prevCap: 4, lti: 0.40, util: -0.12, repay: -0.35,
+    emp: { FORMAL: -0.15, INFORMAL: 0.30, SELF: 0.15, UNEMP: 0.55 },
+    wealthyIncome: 9000, weakScore: 600, wealthyWeak: 0.30, drift: 0.35, noise: 0.45,
+  },
+  shap: { harm: 90, gain: 25, noise: 3.0 },
+  quality: {
+    seedOffset: 1,
+    missing: {
+      enabled: true, marker: '', mechanism: 'MCAR', groupField: 'city', groupKey: 'RURAL', groupMult: 3,
+      cols: { applicant_age: 0.5, income_monthly: 2, employment_status: 1, education_level: 3, social_media_score: 4,
+        mobile_plan_type: 1, utility_payments_12m: 2, digital_footprint_score: 3 },
+    },
+    outliers: {
+      enabled: true, style: 'mixed', direction: 'both', magnitude: 5,
+      cols: { applicant_age: 0.2, income_monthly: 0.5, credit_score_traditional: 0.2, social_media_score: 0.2,
+        digital_footprint_score: 0.2, loan_amount_requested: 0.5 },
+    },
+  },
+};
+
+// ---------------------------------------------------------------- helpers
+const clone = o => JSON.parse(JSON.stringify(o));
+const sigmoid = x => 1 / (1 + Math.exp(-x));
+const clip = (x, a, b) => Math.min(b, Math.max(a, x));
+const num = (v, d = 0) => { const x = typeof v === 'number' ? v : parseFloat(v); return Number.isFinite(x) ? x : d; };
+
+function makeRng(seed) {
+  let s = (Math.floor(num(seed)) >>> 0) ^ 0x5bd1e995;
+  const sm = () => { s = (s + 0x9E3779B9) >>> 0; let z = s; z = Math.imul(z ^ (z >>> 16), 0x85ebca6b) >>> 0; z = Math.imul(z ^ (z >>> 13), 0xc2b2ae35) >>> 0; return (z ^ (z >>> 16)) >>> 0; };
+  let a = sm(), b = sm(), c = sm(), d = sm();
+  const r = () => {
+    a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+    let t = (a + b) | 0; a = b ^ (b >>> 9); b = (c + (c << 3)) | 0; c = (c << 21) | (c >>> 11); d = (d + 1) | 0; t = (t + d) | 0; c = (c + t) | 0;
+    return (t >>> 0) / 4294967296;
+  };
+  let spare = null;
+  r.normal = (m = 0, sd = 1) => {
+    if (spare !== null) { const v = spare; spare = null; return m + sd * v; }
+    let u, v, q; do { u = r() * 2 - 1; v = r() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+    const f = Math.sqrt(-2 * Math.log(q) / q); spare = v * f; return m + sd * u * f;
+  };
+  r.poisson = lam => {
+    if (!(lam > 0)) return 0;
+    if (lam > 30) return Math.max(0, Math.round(r.normal(lam, Math.sqrt(lam))));
+    const L = Math.exp(-lam); let k = 0, p = 1; do { k++; p *= r(); } while (p > L); return k - 1;
+  };
+  r.binom = (n, p) => { let k = 0; for (let i = 0; i < n; i++) if (r() < p) k++; return k; };
+  r.pick = probs => { const u = r(); let c = 0; for (let i = 0; i < probs.length; i++) { c += probs[i]; if (u < c) return i; } return probs.length - 1; };
+  r.int = n => Math.floor(r() * n);
+  r.shuffle = arr => { for (let i = arr.length - 1; i > 0; i--) { const j = r.int(i + 1); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+  return r;
+}
+
+function normP(v) {
+  const w = v.map(x => Math.max(0, num(x)));
+  const s = w.reduce((a, b) => a + b, 0);
+  return s > 0 ? w.map(x => x / s) : w.map(() => 1 / w.length);
+}
+function softmaxPick(rng, U) {
+  const m = Math.max(...U); const e = U.map(u => Math.exp(u - m)); const s = e.reduce((a, b) => a + b, 0);
+  return rng.pick(e.map(x => x / s));
+}
+function meanOf(a) { let s = 0; for (let i = 0; i < a.length; i++) s += a[i]; return a.length ? s / a.length : 0; }
+function zArr(a) {
+  const n = a.length, m = meanOf(a); let v = 0; for (let i = 0; i < n; i++) v += (a[i] - m) ** 2;
+  const sd = Math.sqrt(v / n); const out = new Float64Array(n);
+  if (sd > 0) for (let i = 0; i < n; i++) out[i] = (a[i] - m) / sd;
+  return out;
+}
+function center(a) { const m = meanOf(a); const o = new Float64Array(a.length); for (let i = 0; i < a.length; i++) o[i] = a[i] - m; return o; }
+function quantileSorted(s, q) {
+  if (!s.length) return 0; const pos = (s.length - 1) * clip(q, 0, 1); const lo = Math.floor(pos), hi = Math.ceil(pos);
+  return s[lo] + (s[hi] - s[lo]) * (pos - lo);
+}
+function bisect(f, lo, hi, target, iters = 60) {
+  for (let i = 0; i < iters; i++) { const mid = 0.5 * (lo + hi); if (f(mid) < target) lo = mid; else hi = mid; }
+  return 0.5 * (lo + hi);
+}
+const blank = v => v === '' || v === null || v === undefined || (typeof v === 'string' && v.trim() === '') || !Number.isFinite(num(v, NaN));
+const mapVec = (m, keys) => keys.map(k => num(m && m[k]));
+const pad = (n, w) => String(n).padStart(w, '0');
+
+// ================================================================ generate
+function generate(cfgIn) {
+  const C = cfgIn;
+  const K = CATS;
+  const N = Math.max(10, Math.round(num(C.basics.n, 1000)));
+  const rng = makeRng(C.basics.seed);
+  const warnings = [];
+  const L = C.labels;
+
+  // ---------- demographics
+  const pReg = normP(mapVec(C.pop.region, K.region));
+  const raceP = K.region.map(g => normP(mapVec(C.pop.raceByRegion[g], K.race)));
+  const cityP = K.region.map(g => normP(mapVec(C.pop.cityByRegion[g], K.city)));
+  const neighP = K.city.map(c => K.race.map(r => {
+    const b = mapVec(C.pop.neighByCity[c], K.neigh), m = mapVec(C.pop.neighRaceMult[r], K.neigh);
+    return normP(b.map((x, i) => Math.max(0, x) * Math.max(0, m[i])));
+  }));
+  const pGen = normP(mapVec(C.pop.gender, K.gender));
+
+  const region = new Uint8Array(N), race = new Uint8Array(N), city = new Uint8Array(N), neigh = new Uint8Array(N), gender = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    region[i] = rng.pick(pReg);
+    race[i] = rng.pick(raceP[region[i]]);
+    city[i] = rng.pick(cityP[region[i]]);
+    neigh[i] = rng.pick(neighP[city[i]][race[i]]);
+  }
+  const A = C.pop.age;
+  let aMin = Math.round(num(A.min, 18)), aMax = Math.round(num(A.max, 75)); if (aMin > aMax) [aMin, aMax] = [aMax, aMin];
+  const age = new Int16Array(N);
+  const ys = clip(num(A.youngShare, 70) / 100, 0, 1);
+  for (let i = 0; i < N; i++) {
+    let x, tries = 0;
+    do {
+      x = rng() < ys ? rng.normal(num(A.youngMean), Math.abs(num(A.youngSd, 1))) : rng.normal(num(A.oldMean), Math.abs(num(A.oldSd, 1)));
+      tries++;
+    } while (!(x >= aMin - 0.5 && x < aMax + 0.5) && tries < 200);
+    if (!(x >= aMin - 0.5 && x < aMax + 0.5)) x = aMin + rng() * (aMax - aMin);
+    age[i] = Math.round(x);
+  }
+  for (let i = 0; i < N; i++) gender[i] = rng.pick(pGen);
+
+  // ---------- education
+  const E = C.edu;
+  const eN = mapVec(E.neigh, K.neigh), eR = mapVec(E.race, K.race), eG = mapVec(E.region, K.region), eC = mapVec(E.city, K.city);
+  const eLat = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    eLat[i] = rng.normal() + eN[neigh[i]] + eR[race[i]] + eG[region[i]] + eC[city[i]]
+      + (age[i] > 60 ? num(E.over60) : 0) + (age[i] < 23 ? num(E.under23) : 0);
+  }
+  const es = normP(mapVec(E.share, K.edu));
+  const sorted = Float64Array.from(eLat).sort();
+  const q1 = quantileSorted(sorted, es[0]), q2 = quantileSorted(sorted, es[0] + es[1]);
+  const edu = new Uint8Array(N), eduC = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    edu[i] = es[0] > 0 && eLat[i] < q1 ? 0 : (es[0] + es[1] > 0 && eLat[i] < q2 ? 1 : 2);
+    if (es[2] === 0 && edu[i] === 2) edu[i] = 1;
+    eduC[i] = edu[i] - 1;
+  }
+
+  // ---------- employment
+  const T = C.emp.terms;
+  const emV = key => mapVec(T[key], K.emp);
+  const tB = emV('base'), tE = emV('edu'), tU24 = emV('u24'), tP = emV('prime'), t35 = emV('o35'), t60 = emV('o60');
+  const mR = K.race.map(r => mapVec(C.emp.race[r], K.emp)), mG = K.region.map(g => mapVec(C.emp.region[g], K.emp));
+  const mC = K.city.map(c => mapVec(C.emp.city[c], K.emp)), mN = K.neigh.map(n => mapVec(C.emp.neigh[n], K.emp));
+  const emp = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    const a = age[i]; const U = [0, 0, 0, 0];
+    for (let k = 0; k < 4; k++) {
+      U[k] = tB[k] + tE[k] * eduC[i] + (a < 24 ? tU24[k] : 0) + (a >= 25 && a <= 55 ? tP[k] : 0) + (a >= 35 ? t35[k] : 0) + (a >= 60 ? t60[k] : 0)
+        + mR[race[i]][k] + mG[region[i]][k] + mC[city[i]][k] + mN[neigh[i]][k];
+    }
+    emp[i] = softmaxPick(rng, U);
+  }
+  const SELF = 2, UNEMP = 3, INFORMAL = 1, FORMAL = 0;
+
+  // ---------- income
+  const I = C.income;
+  const iE = mapVec(I.emp, K.emp), iN = mapVec(I.neigh, K.neigh), iG = mapVec(I.region, K.region), iC = mapVec(I.city, K.city), iR = mapVec(I.race, K.race), iS = mapVec(I.gender, K.gender);
+  const incMin = Math.max(1, num(I.min, 400)), incMax = Math.max(incMin, num(I.max, 80000)), incMed = Math.max(1, num(I.median, 2900));
+  const income = new Float64Array(N), lnInc = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const a = age[i];
+    const ln = Math.log(incMed) + num(I.edu) * eduC[i] + iE[emp[i]] + iN[neigh[i]] + iG[region[i]] + iC[city[i]]
+      + num(I.ageGrowth) * (1 - Math.exp(-(a - aMin) / 15)) - num(I.ageDecline) * Math.max(a - 55, 0)
+      + iR[race[i]] + iS[gender[i]] + rng.normal() * (emp[i] === SELF ? num(I.noiseSelf) : num(I.noise));
+    income[i] = clip(Math.round(Math.exp(ln)), incMin, incMax);
+    lnInc[i] = Math.log(income[i]);
+  }
+  const zinc = zArr(lnInc);
+
+  // ---------- alternative data
+  const AL = C.alt, PL = AL.plan;
+  const plan = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    plan[i] = softmaxPick(rng, [0,
+      num(PL.postBase) + num(PL.postInc) * zinc[i] + num(PL.edu) * eduC[i],
+      num(PL.premBase) + num(PL.premInc) * zinc[i] + (neigh[i] === 0 ? num(PL.premHigh) : 0) + num(PL.edu) * eduC[i]]);
+  }
+  const aff = new Float64Array(N); for (let i = 0; i < N; i++) aff[i] = rng.normal();
+  const ageRef = num(AL.ageRef, 35);
+  const ageEff = i => age[i] < ageRef ? num(AL.ageYoungRate) * (ageRef - age[i]) : -num(AL.ageOldRate) * (age[i] - ageRef);
+  function altScore(S) {
+    const sp = mapVec(S.plan, K.plan), sc = mapVec(S.city, K.city), sn = mapVec(S.neigh, K.neigh);
+    const out = new Int16Array(N);
+    for (let i = 0; i < N; i++) {
+      const v = num(S.base) + num(S.inc) * zinc[i] + num(S.edu) * eduC[i] + sp[plan[i]] + num(S.ageW) * ageEff(i)
+        + sc[city[i]] + sn[neigh[i]] + num(S.affinity) * aff[i] + rng.normal(0, Math.abs(num(S.noise)));
+      out[i] = clip(Math.round(v), 1, 100);
+    }
+    return out;
+  }
+  const social = altScore(AL.social);
+  const digital = altScore(AL.digital);
+
+  // ---------- repayment latent, utilities, previous defaults, bureau score
+  const CR = C.credit;
+  const rRaw = new Float64Array(N); for (let i = 0; i < N; i++) rRaw[i] = rng.normal() + num(CR.repayInc) * zinc[i];
+  const rep = zArr(rRaw);
+  const months = Math.max(1, Math.round(num(CR.utilMonths, 12)));
+  const uE = mapVec(CR.utilEmp, K.emp), pE = mapVec(CR.prevEmp, K.emp), sE = mapVec(CR.scoreEmp, K.emp);
+  const prevMax = Math.max(0, Math.round(num(CR.prevMax, 5)));
+  const sMin = num(CR.scoreMin, 100), sMax = Math.max(sMin, num(CR.scoreMax, 980));
+  const util = new Int16Array(N), prev = new Int16Array(N), cs = new Int16Array(N);
+  const utilCenter = months * 0.875;
+  for (let i = 0; i < N; i++) {
+    util[i] = rng.binom(months, sigmoid(num(CR.utilBase) + num(CR.utilRepay) * rep[i] + num(CR.utilInc) * zinc[i] + uE[emp[i]]));
+    const lam = Math.exp(num(CR.prevBase) + num(CR.prevRepay) * rep[i] + pE[emp[i]] + num(CR.prevInc) * zinc[i] + (age[i] > 30 ? num(CR.prevAge30) : 0));
+    prev[i] = Math.min(rng.poisson(lam), prevMax);
+    const v = num(CR.scoreBase) + num(CR.scoreRepay) * rep[i] + num(CR.scoreInc) * zinc[i] + num(CR.scorePrev) * prev[i]
+      + num(CR.scoreUtil) * (util[i] - utilCenter) + sE[emp[i]] + num(CR.scoreAge) * (Math.min(age[i], 60) - 35) + rng.normal(0, Math.abs(num(CR.scoreNoise)));
+    cs[i] = clip(Math.round(v), sMin, sMax);
+  }
+
+  // ---------- loan & channel
+  const LN = C.loan;
+  const lMin = Math.max(1, num(LN.min, 500)), lMax = Math.max(lMin, num(LN.max, 150000)), lRound = Math.max(1, num(LN.round, 50));
+  const loan = new Float64Array(N), lti = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const ln = Math.log(Math.max(1, num(LN.median, 5500))) + num(LN.incElast) * (lnInc[i] - Math.log(incMed)) + rng.normal(0, Math.abs(num(LN.noise)));
+    loan[i] = clip(Math.round(Math.exp(ln) / lRound) * lRound, lMin, lMax);
+    lti[i] = loan[i] / income[i];
+  }
+  const CH = C.channel;
+  const zDig = zArr(digital);
+  const channel = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    channel[i] = softmaxPick(rng, [
+      num(CH.appDigital) * zDig[i] + (age[i] < 35 ? num(CH.appYoung) : 0),
+      num(CH.webBase) + num(CH.webDigital) * zDig[i],
+      num(CH.partnerBase) + num(CH.partnerDigital) * zDig[i] + (city[i] >= 2 ? num(CH.partnerNonUrban) : 0) + (neigh[i] === 3 ? num(CH.partnerFavela) : 0)]);
+  }
+
+  // ---------- timestamps
+  const year = Math.round(num(C.basics.year, 2025));
+  const start = Date.UTC(year, 0, 1); const nDays = Math.round((Date.UTC(year + 1, 0, 1) - start) / 864e5);
+  const mw = C.time.month.map(x => Math.max(0, num(x))), dw = C.time.dow.map(x => Math.max(0, num(x)));
+  const dayW = []; for (let d = 0; d < nDays; d++) { const dt = new Date(start + d * 864e5); const dowMon = (dt.getUTCDay() + 6) % 7; dayW.push(mw[dt.getUTCMonth()] * dw[dowMon]); }
+  const dayCum = cumulative(normP(dayW)), hourCum = cumulative(normP(C.time.hour.map(x => Math.max(0, num(x)))));
+  const dayIdx = new Int16Array(N), ts = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const d = searchCum(dayCum, rng()); const h = searchCum(hourCum, rng()); const s = rng.int(3600);
+    dayIdx[i] = d; ts[i] = start + d * 864e5 + h * 36e5 + s * 1000;
+  }
+
+  // ================================================== AI decision
+  const AI = C.ai, LG = AI.legit, PX = AI.proxy, B = AI.bias;
+  const lgE = mapVec(LG.emp, K.emp);
+  const zcs = zArr(cs), zutil = zArr(util), lnLti = new Float64Array(N); for (let i = 0; i < N; i++) lnLti[i] = Math.log(lti[i]);
+  const zlti = zArr(lnLti), zsoc = zArr(social);
+  const comp = (fn) => { const a = new Float64Array(N); for (let i = 0; i < N; i++) a[i] = fn(i); return center(a); };
+  const legitParts = [
+    comp(i => num(LG.score) * zcs[i]),
+    comp(i => num(LG.prev) * Math.min(prev[i], 3)),
+    comp(i => num(LG.util) * zutil[i]),
+    comp(i => num(LG.lti) * zlti[i]),
+    comp(i => lgE[emp[i]]),
+    comp(i => num(LG.income) * zinc[i]),
+  ];
+  const pxPl = mapVec(PX.plan, K.plan), pxN = mapVec(PX.neigh, K.neigh), pxG = mapVec(PX.region, K.region);
+  const proxyParts = [
+    comp(i => num(PX.digital) * zDig[i]),
+    comp(i => num(PX.social) * zsoc[i]),
+    comp(i => pxPl[plan[i]]),
+    comp(i => pxN[neigh[i]]),
+    comp(i => pxG[region[i]]),
+  ];
+  const legitSum = new Float64Array(N), legAbs = new Float64Array(N), proxySum = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    for (const p of legitParts) { legitSum[i] += p[i]; legAbs[i] += Math.abs(p[i]); }
+    for (const p of proxyParts) proxySum[i] += p[i];
+  }
+  const wAge = num(B.womenAge, 40);
+  const f40 = new Uint8Array(N); for (let i = 0; i < N; i++) f40[i] = gender[i] === 1 && age[i] > wAge ? 1 : 0;
+  const bWR = mapVec(B.womenRace, K.race), bWN = mapVec(B.womenNeigh, K.neigh);
+  const tRace = K.race.indexOf(B.tripleRace), tNeigh = K.neigh.indexOf(B.tripleNeigh);
+  const base = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    let gb = 0;
+    if (f40[i]) gb += num(B.women) + bWR[race[i]] + bWN[neigh[i]] + (race[i] === tRace && neigh[i] === tNeigh ? num(B.triple) : 0);
+    if (gender[i] === 2) gb += num(B.nonBinary);
+    if (age[i] < num(B.youngAge, 22)) gb += num(B.young);
+    if (age[i] > num(B.oldAge, 60)) gb += num(B.old);
+    base[i] = legitSum[i] + proxySum[i] + gb + rng.normal(0, Math.abs(num(AI.noise)));
+  }
+
+  // calibration
+  const TG = AI.targets;
+  const refR = Math.max(0, K.race.indexOf(TG.refRace));
+  const groupIdx = K.race.map((_, r) => { const a = []; for (let i = 0; i < N; i++) if (race[i] === r) a.push(i); return a; });
+  const rateIdx = (idx, shift) => { if (!idx.length) return NaN; let k = 0; for (const i of idx) if (base[i] + shift > 0) k++; return k / idx.length; };
+  const tRef = TG.race[K.race[refR]];
+  const overallT = blank(TG.overall) ? null : clip(num(TG.overall) / 100, 0.001, 0.999);
+  const off = new Float64Array(K.race.length);
+  let c = 0;
+  const allIdx = Array.from({ length: N }, (_, i) => i);
+  const overallRate = (cc, offs) => { let k = 0; for (let i = 0; i < N; i++) if (base[i] + cc - offs[race[i]] > 0) k++; return k / N; };
+  const refHasTarget = !blank(tRef) && groupIdx[refR].length > 0;
+  if (refHasTarget) c = bisect(x => rateIdx(groupIdx[refR], x), -12, 12, clip(num(tRef) / 100, 0.001, 0.999));
+  else if (overallT !== null) c = bisect(x => overallRate(x, off), -12, 12, overallT);
+  const free = [];
+  K.race.forEach((rk, r) => {
+    if (r === refR) return;
+    const t = TG.race[rk];
+    if (!blank(t) && groupIdx[r].length) off[r] = bisect(d => -rateIdx(groupIdx[r], c - d), -12, 12, -clip(num(t) / 100, 0.001, 0.999));
+    else if (groupIdx[r].length) free.push(r);
+  });
+  if (refHasTarget && overallT !== null && free.length) {
+    const fw = mapVec(TG.freeWeight, K.race);
+    if (free.some(r => fw[r] !== 0)) {
+      const D = bisect(d => { const o = Float64Array.from(off); free.forEach(r => o[r] = d * fw[r]); return -overallRate(c, o); }, -12, 12, -overallT);
+      free.forEach(r => off[r] = D * fw[r]);
+    }
+  } else if (refHasTarget && overallT !== null && !free.length) {
+    warnings.push('Overall approval target was not used: every race group has its own target, so no group is left free to absorb the difference.');
+  }
+  const sTot = new Float64Array(N), aiA = new Uint8Array(N), conf = new Float64Array(N);
+  const cScale = Math.max(0.01, num(AI.confScale, 2.8));
+  for (let i = 0; i < N; i++) {
+    sTot[i] = base[i] + c - off[race[i]];
+    aiA[i] = sTot[i] > 0 ? 1 : 0;
+    conf[i] = clip(50 + 50 * Math.tanh(Math.abs(sTot[i]) / cScale) + rng.normal(0, 1.5), 50.5, 99.9);
+  }
+
+  // ================================================== human review
+  const RV = C.review;
+  const fast = new Uint8Array(N), w = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    fast[i] = aiA[i] && loan[i] <= num(RV.fastLoan) && conf[i] >= num(RV.fastConf) ? 1 : 0;
+    let x = num(RV.base) + num(RV.border) * Math.exp(-Math.abs(sTot[i]));
+    if (!aiA[i] && cs[i] >= num(RV.strongScore)) x *= num(RV.strongMult, 1);
+    if (aiA[i] && cs[i] < num(RV.weakScore) && prev[i] >= 1) x *= num(RV.weakMult, 1);
+    if (loan[i] > num(RV.largeLoan)) x *= num(RV.largeMult, 1);
+    w[i] = fast[i] ? 0 : Math.max(0, x);
+  }
+  const eligible = []; for (let i = 0; i < N; i++) if (w[i] > 0) eligible.push(i);
+  let nRev = Math.round(clip(num(RV.share), 0, 100) / 100 * N);
+  if (nRev > eligible.length) { warnings.push(`Only ${eligible.length} applications are eligible for review (others are fast-tracked); review count reduced.`); nRev = eligible.length; }
+  const keys = eligible.map(i => [Math.log(rng()) / w[i], i]).sort((a, b) => b[0] - a[0]);
+  const revIdx = keys.slice(0, nRev).map(k => k[1]);
+  const reviewed = new Uint8Array(N); revIdx.forEach(i => reviewed[i] = 1);
+
+  const nAn = Math.max(1, Math.round(num(RV.analysts, 20)));
+  const eMin = Math.max(0, num(RV.expMin, 4)), eMax = Math.max(eMin, num(RV.expMax, 174));
+  const pool = []; for (let k = 0; k < nAn; k++) pool.push(Math.round(nAn === 1 ? eMin : (eMin > 0 ? eMin * Math.pow(eMax / eMin, k / (nAn - 1)) : eMin + (eMax - eMin) * k / (nAn - 1))));
+  const anExp = rng.shuffle(pool.slice());
+  const workload = anExp.map(() => Math.exp(rng.normal(0, 0.45)));
+  const wlP = normP(workload);
+  const minPer = Math.max(0, Math.round(num(RV.minPerAnalyst, 5)));
+  let anOf = [];
+  for (let t = 0; t < 300; t++) {
+    anOf = revIdx.map(() => rng.pick(wlP));
+    const cnt = new Array(nAn).fill(0); anOf.forEach(a => cnt[a]++);
+    if (Math.min(...cnt) >= minPer) break;
+    if (t === 299 && nRev > 0) warnings.push(`Could not give every analyst at least ${minPer} reviews with ${nRev} reviews in total; some analysts have fewer.`);
+  }
+  const anEff = anExp.map(() => rng.normal(0, Math.abs(num(RV.effSd, 0.3))));
+  const ids = Array.from({ length: nAn }, (_, k) => 'ANL' + pad(k + 1, 3));
+  let senior = anExp.map((e, k) => e >= num(RV.highMinExp) ? k : -1).filter(k => k >= 0);
+  const highN = Math.min(Math.max(0, Math.round(num(RV.highN))), nAn);
+  if (senior.length < highN) senior = Array.from({ length: nAn }, (_, k) => k);
+  const hi = rng.shuffle(senior.slice()).slice(0, highN);
+  hi.forEach(k => anEff[k] += num(RV.highEff));
+  const rest = Array.from({ length: nAn }, (_, k) => k).filter(k => !hi.includes(k));
+  const lo = rng.shuffle(rest).slice(0, Math.min(Math.max(0, Math.round(num(RV.lowN))), rest.length));
+  lo.forEach(k => anEff[k] += num(RV.lowEff));
+  const xOv = revIdx.map((i, j) => {
+    const a = anOf[j];
+    return num(RV.wExp) * (anExp[a] - 60) / 50 + anEff[a]
+      + num(RV.wStrongRej) * (!aiA[i] && cs[i] >= num(RV.strongScore) ? 1 : 0)
+      + num(RV.wCleanRej) * (!aiA[i] && cs[i] >= num(RV.cleanScore) && prev[i] === 0 ? 1 : 0)
+      + num(RV.wWeakAppr) * (aiA[i] && cs[i] < num(RV.weakScore) && prev[i] >= 1 ? 1 : 0)
+      + num(RV.wLowConf) * (conf[i] < num(RV.lowConf) ? 1 : 0);
+  });
+  const tOv = clip(num(RV.targetOverride) / 100, 0, 1);
+  const bOv = xOv.length ? bisect(b => meanOf(xOv.map(x => sigmoid(x + b))), -15, 15, tOv) : 0;
+  const override = new Uint8Array(N), anId = new Array(N).fill(null), anX = new Array(N).fill(null);
+  revIdx.forEach((i, j) => { override[i] = rng() < sigmoid(xOv[j] + bOv) ? 1 : 0; anId[i] = ids[anOf[j]]; anX[i] = anExp[anOf[j]]; });
+  const appr = new Uint8Array(N); for (let i = 0; i < N; i++) appr[i] = override[i] ? 1 - aiA[i] : aiA[i];
+
+  // ================================================== explanations & complaints
+  const EX = C.expl;
+  const xEd = mapVec(EX.edu, K.edu), xR = mapVec(EX.race, K.race), xN = mapVec(EX.neigh, K.neigh), xCh = mapVec(EX.channel, K.channel);
+  const expl = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    const xe = num(EX.base) + num(EX.approved) * appr[i] + num(EX.reviewed) * reviewed[i] + xEd[edu[i]] + xR[race[i]] + xN[neigh[i]] + xCh[channel[i]]
+      + (f40[i] ? num(EX.women) : 0) + rng.normal(0, Math.abs(num(EX.noise)));
+    expl[i] = rng() < sigmoid(xe) ? 1 : 0;
+  }
+  const CP = C.complaint;
+  const cR = mapVec(CP.race, K.race), cN = mapVec(CP.neigh, K.neigh);
+  const complaint = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    const rej = 1 - appr[i];
+    const xc = num(CP.base) + num(CP.rejected) * rej + num(CP.noExpl) * (1 - expl[i]) + num(CP.qualRej) * (rej && cs[i] >= num(CP.qualScore) ? 1 : 0)
+      + (rej ? cR[race[i]] + cN[neigh[i]] + (f40[i] ? num(CP.women) : 0) : 0) + num(CP.overrideRej) * (override[i] && rej ? 1 : 0)
+      + rng.normal(0, Math.abs(num(CP.noise)));
+    complaint[i] = rng() < sigmoid(xc) ? 1 : 0;
+  }
+
+  // ================================================== defaults
+  const DF = C.def;
+  const dE = mapVec(DF.emp, K.emp);
+  const xd = new Float64Array(N), uD = new Float64Array(N);
+  const prevCap = Math.max(0, num(DF.prevCap, 4));
+  for (let i = 0; i < N; i++) {
+    const frac = nDays > 1 ? dayIdx[i] / (nDays - 1) : 0;
+    const drift = num(DF.drift) * frac - num(DF.drift) / 2;
+    const wealthy = income[i] >= num(DF.wealthyIncome) || neigh[i] === 0;
+    const weak = cs[i] < num(DF.weakScore) || prev[i] >= 1;
+    xd[i] = num(DF.score) * zcs[i] + num(DF.prev) * Math.min(prev[i], prevCap) + dE[emp[i]] + num(DF.lti) * zlti[i]
+      + num(DF.util) * (util[i] - utilCenter) + num(DF.repay) * rep[i] + (wealthy && weak ? num(DF.wealthyWeak) : 0) + drift
+      + rng.normal(0, Math.abs(num(DF.noise)));
+    uD[i] = rng();
+  }
+  const apIdx = []; for (let i = 0; i < N; i++) if (appr[i]) apIdx.push(i);
+  const tD = clip(num(DF.target) / 100, 0, 1);
+  const bD = apIdx.length ? bisect(b => { let k = 0; for (const i of apIdx) if (uD[i] < sigmoid(xd[i] + b)) k++; return k / apIdx.length; }, -20, 20, tD) : 0;
+  const dflt = new Uint8Array(N); for (let i = 0; i < N; i++) dflt[i] = uD[i] < sigmoid(xd[i] + bD) ? 1 : 0;
+
+  // ================================================== SHAP-style fairness
+  const SH = C.shap;
+  const shap = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const harm = Math.max(-proxySum[i], 0), gain = Math.max(proxySum[i], 0);
+    shap[i] = clip(100 - num(SH.harm) * harm / (harm + legAbs[i] + 0.5) - num(SH.gain) * gain / (gain + legAbs[i] + 0.5) + rng.normal(0, Math.abs(num(SH.noise))), 1, 100);
+  }
+
+  // ================================================== assemble (sorted by timestamp)
+  const order = Array.from({ length: N }, (_, i) => i).sort((a, b) => ts[a] - ts[b] || a - b);
+  const lab = (set, idx) => L[set][CATS[set][idx]];
+  const idW = Math.max(5, String(N).length);
+  const prefix = String(C.basics.idPrefix || '').replace(/\s+/g, '');
+  const cols = {}; COLS.forEach(k => cols[k] = new Array(N));
+  order.forEach((i, p) => {
+    cols.application_id[p] = prefix + year + pad(p + 1, idW);
+    cols.timestamp[p] = fmtTs(ts[i]);
+    cols.applicant_age[p] = age[i];
+    cols.applicant_gender[p] = lab('gender', gender[i]);
+    cols.applicant_race[p] = lab('race', race[i]);
+    cols.applicant_region[p] = lab('region', region[i]);
+    cols.applicant_city_type[p] = lab('city', city[i]);
+    cols.neighborhood_type[p] = lab('neigh', neigh[i]);
+    cols.income_monthly[p] = income[i];
+    cols.employment_status[p] = lab('emp', emp[i]);
+    cols.credit_score_traditional[p] = cs[i];
+    cols.education_level[p] = lab('edu', edu[i]);
+    cols.social_media_score[p] = social[i];
+    cols.mobile_plan_type[p] = lab('plan', plan[i]);
+    cols.utility_payments_12m[p] = util[i];
+    cols.previous_defaults[p] = prev[i];
+    cols.digital_footprint_score[p] = digital[i];
+    cols.application_channel[p] = lab('channel', channel[i]);
+    cols.loan_amount_requested[p] = loan[i];
+    cols.approval_decision[p] = appr[i] ? 'Approved' : 'Rejected';
+    cols.ai_recommendation[p] = aiA[i] ? 'Approved' : 'Rejected';
+    cols.decision_confidence[p] = Math.round(conf[i] * 10) / 10;
+    cols.explanation_provided[p] = expl[i] ? 'Yes' : 'No';
+    cols.human_reviewed[p] = reviewed[i] ? 'Yes' : (fast[i] ? 'N/A' : 'No');
+    cols.human_override[p] = reviewed[i] ? (override[i] ? 'Yes' : 'No') : 'N/A';
+    cols.analyst_id[p] = anId[i];
+    cols.analyst_experience_months[p] = anX[i];
+    cols.complaint_filed[p] = complaint[i] ? 'Yes' : 'No';
+    cols.default_within_12m[p] = appr[i] ? (dflt[i] ? 'Yes' : 'No') : 'N/A';
+    cols.shap_fairness_score[p] = Math.round(shap[i] * 10) / 10;
+  });
+  // DIR by race
+  const refLabel = L.race[K.race[refR]];
+  const rates = groupRates(cols.applicant_race, cols.approval_decision);
+  const refRate = rates[refLabel];
+  for (let p = 0; p < N; p++) {
+    const r = rates[cols.applicant_race[p]];
+    cols.disparate_impact_ratio[p] = refRate > 0 ? Math.round(Math.min(r / refRate, 1) * 1e4) / 1e4 : 0;
+  }
+  const meta = { N, c, offsets: Object.fromEntries(K.race.map((k, r) => [k, off[r]])), bOv, bD, nRev,
+    hiAnalysts: hi.map(k => ids[k]), loAnalysts: lo.map(k => ids[k]), analysts: ids.map((id, k) => ({ id, exp: anExp[k], eff: anEff[k] })), warnings, refLabel };
+  return { cols, meta, n: N };
+}
+
+function cumulative(p) { const c = new Float64Array(p.length); let s = 0; for (let i = 0; i < p.length; i++) { s += p[i]; c[i] = s; } return c; }
+function searchCum(c, u) { let lo = 0, hi = c.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (u < c[m]) hi = m; else lo = m + 1; } return lo; }
+function fmtTs(ms) { const d = new Date(ms); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1, 2)}-${pad(d.getUTCDate(), 2)} ${pad(d.getUTCHours(), 2)}:${pad(d.getUTCMinutes(), 2)}:${pad(d.getUTCSeconds(), 2)}`; }
+function groupRates(groupCol, decCol) {
+  const t = {}, a = {};
+  for (let i = 0; i < groupCol.length; i++) { const g = groupCol[i]; t[g] = (t[g] || 0) + 1; if (decCol[i] === 'Approved') a[g] = (a[g] || 0) + 1; }
+  const r = {}; for (const g in t) r[g] = (a[g] || 0) / t[g]; return r;
+}
+
+// ================================================================ data quality injection
+function injectQuality(clean, cfg) {
+  const Q = cfg.quality; const N = clean.n;
+  const rng = makeRng(num(cfg.basics.seed) + 7919 * Math.round(num(Q.seedOffset, 1)));
+  const cols = {}; COLS.forEach(k => cols[k] = clean.cols[k]);
+  const copied = new Set();
+  const own = k => { if (!copied.has(k)) { cols[k] = cols[k].slice(); copied.add(k); } return cols[k]; };
+  const log = [];
+  const touched = new Set();
+  const ids = clean.cols.application_id;
+  const summary = {};
+
+  // ---- outliers
+  if (Q.outliers && Q.outliers.enabled) {
+    const O = Q.outliers; const mag = Math.max(1, num(O.magnitude, 5));
+    for (const col of Object.keys(O.cols || {})) {
+      const pct = clip(num(O.cols[col]), 0, 100); const info = NUM_COLS[col];
+      if (!info || pct <= 0) continue;
+      const src = clean.cols[col];
+      const elig = []; for (let i = 0; i < N; i++) if (typeof src[i] === 'number') elig.push(i);
+      if (!elig.length) continue;
+      const vals = elig.map(i => info.log ? Math.log(Math.max(src[i], 1e-9)) : src[i]);
+      const m = meanOf(vals); const sd = Math.sqrt(meanOf(vals.map(v => (v - m) ** 2))) || 1;
+      const k = Math.min(elig.length, Math.round(pct / 100 * elig.length));
+      const pick = rng.shuffle(elig.slice()).slice(0, k);
+      const arr = own(col);
+      let made = 0;
+      for (const i of pick) {
+        const old = src[i];
+        let style = O.style === 'mixed' ? (rng() < 0.5 ? 'statistical' : 'entry') : O.style;
+        let dir = O.direction === 'both' ? (rng() < 0.5 ? 'high' : 'low') : O.direction;
+        let v, kind;
+        if (style === 'statistical') {
+          const kk = mag * (1 + 0.5 * rng());
+          let t = dir === 'high' ? m + kk * sd : m - kk * sd;
+          v = info.log ? Math.exp(t) : t;
+          if (!info.log && dir === 'low') v = Math.max(v, 0);
+          kind = `outlier: statistical extreme (${dir})`;
+        } else {
+          const opts = dir === 'high'
+            ? [['×10 (extra zero typed)', old * 10], ['placeholder ' + info.ph, info.ph]]
+            : [['÷10 (digit dropped)', old / 10], ['negative sign', -Math.abs(old || 1)], ['zero entered', 0], ['placeholder -1', -1]];
+          const o = opts[rng.int(opts.length)]; v = o[1]; kind = `outlier: data-entry error, ${o[0]}`;
+        }
+        v = info.int ? Math.round(v) : Math.round(v * 10) / 10;
+        if (v === old) v = info.int ? old + (dir === 'high' ? Math.ceil(mag * sd) : -Math.ceil(mag * sd)) : old * mag;
+        arr[i] = v; touched.add(i + ':' + col); made++;
+        log.push([ids[i], col, kind, old, v]);
+      }
+      summary[col] = Object.assign(summary[col] || {}, { outliers: made });
+    }
+  }
+
+  // ---- missing values
+  if (Q.missing && Q.missing.enabled) {
+    const M = Q.missing;
+    const gField = { region: 'applicant_region', race: 'applicant_race', city: 'applicant_city_type', neigh: 'neighborhood_type', gender: 'applicant_gender',
+      emp: 'employment_status', edu: 'education_level', channel: 'application_channel', plan: 'mobile_plan_type' }[M.groupField];
+    const gLabel = gField && cfg.labels[M.groupField] ? cfg.labels[M.groupField][M.groupKey] : null;
+    const mult = Math.max(0, num(M.groupMult, 1));
+    for (const col of Object.keys(M.cols || {})) {
+      const pct = clip(num(M.cols[col]), 0, 100);
+      if (pct <= 0 || col === 'application_id' || !clean.cols[col]) continue;
+      const src = clean.cols[col];
+      const elig = []; for (let i = 0; i < N; i++) if (src[i] !== null && src[i] !== undefined && !touched.has(i + ':' + col)) elig.push(i);
+      const k = Math.min(elig.length, Math.round(pct / 100 * elig.length));
+      let pick;
+      if (M.mechanism === 'MAR' && gField) {
+        const g = clean.cols[gField];
+        pick = elig.map(i => [Math.log(rng()) / (g[i] === gLabel ? Math.max(mult, 1e-9) : 1), i]).sort((a, b) => b[0] - a[0]).slice(0, k).map(x => x[1]);
+      } else pick = rng.shuffle(elig.slice()).slice(0, k);
+      const arr = own(col);
+      for (const i of pick) { log.push([ids[i], col, 'missing value', src[i], M.marker === '' ? '(blank)' : M.marker]); arr[i] = MISSING; }
+      summary[col] = Object.assign(summary[col] || {}, { missing: pick.length });
+    }
+  }
+  return { cols, n: N, log, summary, marker: (Q.missing && Q.missing.marker) || '' };
+}
+
+// ================================================================ CSV
+function csvCell(v, marker) {
+  if (v === MISSING) return csvEsc(marker || '');
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'number') return String(v);
+  return csvEsc(String(v));
+}
+function csvEsc(s) { return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+function toCSV(ds, marker = '') {
+  const out = [COLS.join(',')];
+  for (let i = 0; i < ds.n; i++) out.push(COLS.map(k => csvCell(ds.cols[k][i], marker)).join(','));
+  return out.join('\n') + '\n';
+}
+function logCSV(log) {
+  const out = ['application_id,column,issue,original_value,new_value'];
+  for (const r of log) out.push(r.map(v => csvEsc(v === null || v === undefined ? '' : String(v))).join(','));
+  return out.join('\n') + '\n';
+}
+
+if (typeof module !== 'undefined') module.exports = { CATS, COLS, NUM_COLS, DEFAULTS, MISSING, generate, injectQuality, toCSV, logCSV, clone, num, blank };
+
+// ======================================================================
+// Summary / validation report built from the CLEAN dataset
+// Returns {sections:[{title, notes:[], tables:[{title, columns, rows}]}], checks, kpis}
+// ======================================================================
+function buildReport(clean, quality, cfg, meta) {
+  const C = clean.cols, N = clean.n, L = cfg.labels;
+  const cur = cfg.basics.currency || '';
+  const isA = C.approval_decision.map(v => v === 'Approved');
+  const f1 = x => Number.isFinite(x) ? x.toFixed(1) : '–';
+  const f2 = x => Number.isFinite(x) ? x.toFixed(2) : '–';
+  const f3 = x => Number.isFinite(x) ? x.toFixed(3) : '–';
+  const pc = x => Number.isFinite(x) ? (100 * x).toFixed(1) + '%' : '–';
+  const intf = x => Number(x).toLocaleString('en-US');
+  const sections = [];
+  const idx = pred => { const a = []; for (let i = 0; i < N; i++) if (pred(i)) a.push(i); return a; };
+  const rate = (rows, pred) => rows.length ? rows.filter(pred).length / rows.length : NaN;
+  const labelsOf = set => CATS[set].map(k => L[set][k]);
+
+  // ---------------- validation checks
+  const checks = [];
+  const check = (name, ok, detail = '') => checks.push({ name, ok: !!ok, detail });
+  const between = (col, a, b) => C[col].every(v => typeof v === 'number' && v >= a && v <= b);
+  check(`Exactly ${intf(num(cfg.basics.n))} rows`, N === Math.max(10, Math.round(num(cfg.basics.n))), `${intf(N)} rows`);
+  check('Unique application_id', new Set(C.application_id).size === N);
+  const mand = COLS.filter(c => c !== 'analyst_id' && c !== 'analyst_experience_months');
+  check('No missing values in mandatory fields (clean file)', mand.every(c => C[c].every(v => v !== null && v !== undefined && v !== '')));
+  const catMap = { applicant_gender: 'gender', applicant_race: 'race', applicant_region: 'region', applicant_city_type: 'city', neighborhood_type: 'neigh',
+    employment_status: 'emp', education_level: 'edu', mobile_plan_type: 'plan', application_channel: 'channel' };
+  check('Categorical labels valid', Object.entries(catMap).every(([c, s]) => { const ok = new Set(labelsOf(s)); return C[c].every(v => ok.has(v)); }));
+  const A = cfg.pop.age;
+  check(`Age ${A.min}-${A.max}`, between('applicant_age', Math.min(A.min, A.max), Math.max(A.min, A.max)));
+  check(`Income ${intf(cfg.income.min)}-${intf(cfg.income.max)}`, between('income_monthly', num(cfg.income.min), num(cfg.income.max)));
+  check(`Credit score ${cfg.credit.scoreMin}-${cfg.credit.scoreMax}`, between('credit_score_traditional', num(cfg.credit.scoreMin), num(cfg.credit.scoreMax)));
+  check(`Loan amount ${intf(cfg.loan.min)}-${intf(cfg.loan.max)}`, between('loan_amount_requested', num(cfg.loan.min), num(cfg.loan.max)));
+  check('Scores 1-100 (social, digital, SHAP)', ['social_media_score', 'digital_footprint_score', 'shap_fairness_score'].every(c => between(c, 1, 100)));
+  check(`Utility payments 0-${cfg.credit.utilMonths}; previous defaults 0-${cfg.credit.prevMax}`, between('utility_payments_12m', 0, num(cfg.credit.utilMonths)) && between('previous_defaults', 0, num(cfg.credit.prevMax)));
+  check('Confidence within 0-100', between('decision_confidence', 0, 100));
+  check(`All timestamps in ${cfg.basics.year}`, C.timestamp.every(t => t.startsWith(String(cfg.basics.year))));
+  check('Default = N/A iff Rejected', C.default_within_12m.every((v, i) => (v === 'N/A') === !isA[i]));
+  const hy = C.human_reviewed.map(v => v === 'Yes');
+  check('Analyst fields populated iff human_reviewed = Yes', hy.every((h, i) => (C.analyst_id[i] !== null) === h && (C.analyst_experience_months[i] !== null) === h));
+  check('human_override = N/A iff not reviewed', hy.every((h, i) => (C.human_override[i] === 'N/A') === !h));
+  check('Final decision = AI recommendation unless overridden', C.approval_decision.every((v, i) => (v === C.ai_recommendation[i]) === (C.human_override[i] !== 'Yes')));
+  const anE = {}; let anOk = true;
+  hy.forEach((h, i) => { if (!h) return; const a = C.analyst_id[i]; if (a in anE && anE[a] !== C.analyst_experience_months[i]) anOk = false; anE[a] = C.analyst_experience_months[i]; });
+  check('Analyst experience consistent per analyst ID', anOk);
+  const zeroCombos = [];
+  CATS.city.forEach(c => CATS.neigh.forEach(n => { if (num(cfg.pop.neighByCity[c][n]) <= 0) zeroCombos.push([L.city[c], L.neigh[n]]); }));
+  if (zeroCombos.length) check('Neighbourhood types set to 0% never appear in that city type (' + zeroCombos.map(z => z.join('+')).join(', ') + ')',
+    zeroCombos.every(([c, n]) => !C.applicant_city_type.some((v, i) => v === c && C.neighborhood_type[i] === n)));
+  const dirBy = {}; let dirOk = true;
+  C.applicant_race.forEach((r, i) => { const d = C.disparate_impact_ratio[i]; if (r in dirBy && dirBy[r] !== d) dirOk = false; dirBy[r] = d; if (!(d >= 0 && d <= 1)) dirOk = false; });
+  check('DIR constant within race group and in [0,1]', dirOk);
+  const nAn = new Set(C.analyst_id.filter(v => v)).size;
+  check(`Analysts used ≤ configured (${cfg.review.analysts})`, nAn <= num(cfg.review.analysts), `${nAn} analysts`);
+
+  // ---------------- targets vs achieved
+  const aiRate = rows => rate(rows, i => C.ai_recommendation[i] === 'Approved');
+  const finRate = rows => rate(rows, i => isA[i]);
+  const all = idx(() => true);
+  const kRows = [['Overall approval (AI)', blank(cfg.ai.targets.overall) ? '–' : cfg.ai.targets.overall + '%', pc(aiRate(all)), pc(finRate(all))]];
+  CATS.race.forEach(r => {
+    const rows = idx(i => C.applicant_race[i] === L.race[r]);
+    const t = cfg.ai.targets.race[r];
+    kRows.push([`Approval – ${L.race[r]}`, blank(t) ? 'free' : t + '%', pc(aiRate(rows)), pc(finRate(rows))]);
+  });
+  const ap = idx(i => isA[i]);
+  const defR = rate(ap, i => C.default_within_12m[i] === 'Yes');
+  const rev = idx(i => hy[i]);
+  const ovR = rate(rev, i => C.human_override[i] === 'Yes');
+  kRows.push(['Default rate (approved loans)', cfg.def.target + '%', '', pc(defR)]);
+  kRows.push(['Human review share', cfg.review.share + '%', '', pc(rev.length / N)]);
+  kRows.push(['Override rate (of reviewed)', cfg.review.targetOverride + '%', '', pc(ovR)]);
+  sections.push({ title: 'Targets vs achieved', notes: ['"AI" = raw model recommendation (what the calibration targets); "Final" = decision after human overrides. "free" = group without its own target, adjusted so the overall target is met.'],
+    tables: [{ columns: ['measure', 'target', 'AI', 'final'], rows: kRows }] });
+
+  sections.push({ title: 'Validation checks (clean dataset)', notes: ['Run on the clean file, before outliers and missing values are injected. Injected issues will deliberately break some of these rules in the "with issues" file.'],
+    tables: [{ columns: ['check', 'result', 'detail'], rows: checks.map(c => [c.name, c.ok ? 'PASS' : 'FAIL', c.detail]) }] });
+
+  // ---------------- approval by groups
+  const refLab = meta.refLabel;
+  function apprTable(col, cats, ref) {
+    const rows = cats.map(g => { const r = idx(i => C[col][i] === g); return [g, r.length, r.filter(i => isA[i]).length, finRate(r)]; });
+    const refRate = (rows.find(r => r[0] === ref) || [])[3];
+    return rows.map(r => [r[0], intf(r[1]), intf(r[2]), pc(r[3]), ref ? f3(r[3] / refRate) : '', ref ? (r[3] / refRate >= 0.8 ? 'yes' : 'NO') : '']);
+  }
+  const apSec = { title: 'Approval rates and disparate impact (final decision)', notes: [`Overall approval: ${pc(finRate(all))}. DIR = group approval rate ÷ reference group rate; the 80% rule flags DIR < 0.8.`], tables: [] };
+  const groups = [['applicant_race', 'race', refLab], ['applicant_gender', 'gender', L.gender.M], ['applicant_region', 'region', null],
+    ['neighborhood_type', 'neigh', L.neigh.HIGH], ['applicant_city_type', 'city', null], ['employment_status', 'emp', null], ['education_level', 'edu', null]];
+  groups.forEach(([col, set, ref]) => apSec.tables.push({ title: `By ${col}` + (ref ? ` (reference: ${ref})` : ''), columns: [col, 'n', 'approved', 'approval_rate', 'DIR', 'passes_80%'], rows: apprTable(col, labelsOf(set), ref) }));
+  const ab = [[18, 24], [25, 34], [35, 44], [45, 54], [55, 64], [65, 200]];
+  apSec.tables.push({ title: 'By age group', columns: ['age_group', 'n', 'approved', 'approval_rate'], rows: ab.map(([a, b]) => { const r = idx(i => C.applicant_age[i] >= a && C.applicant_age[i] <= b); return [b > 150 ? `${a}+` : `${a}-${b}`, intf(r.length), intf(r.filter(i => isA[i]).length), pc(finRate(r))]; }).filter(r => r[1] !== '0') });
+  const B = cfg.ai.bias;
+  const wAge = num(B.womenAge, 40);
+  const fem = i => C.applicant_gender[i] === L.gender.F && C.applicant_age[i] > wAge;
+  const tR = L.race[B.tripleRace], tN = L.neigh[B.tripleNeigh];
+  const cs = C.credit_score_traditional;
+  const inter = [
+    [`${refLab} ${L.gender.M} (all ages)`, i => C.applicant_race[i] === refLab && C.applicant_gender[i] === L.gender.M],
+    [`${L.gender.F} over ${wAge}`, fem],
+    [`${L.gender.M} over ${wAge}`, i => C.applicant_gender[i] === L.gender.M && C.applicant_age[i] > wAge],
+    [`${tR} (all)`, i => C.applicant_race[i] === tR],
+    [`${tR} ${L.gender.F} over ${wAge}`, i => fem(i) && C.applicant_race[i] === tR],
+    [`${tR} ${L.gender.F} over ${wAge}, ${tN}`, i => fem(i) && C.applicant_race[i] === tR && C.neighborhood_type[i] === tN],
+    [`${refLab}, credit score ≥ 700`, i => C.applicant_race[i] === refLab && cs[i] >= 700],
+    [`${tR}, credit score ≥ 700`, i => C.applicant_race[i] === tR && cs[i] >= 700],
+  ];
+  apSec.tables.push({ title: 'Intersectional approval rates', columns: ['group', 'n', 'approved', 'approval_rate'], rows: inter.map(([n, p]) => { const r = idx(p); return [n, intf(r.length), intf(r.filter(i => isA[i]).length), pc(finRate(r))]; }) });
+  sections.push(apSec);
+
+  // ---------------- decision quality
+  const qr = idx(i => !isA[i] && cs[i] > 700);
+  sections.push({ title: 'Credit decision accuracy', notes: [], tables: [{ columns: ['indicator', 'value'], rows: [
+    ['Qualified rejected (score > 700)', intf(qr.length)],
+    ['… as % of applicants with score > 700', pc(qr.length / Math.max(1, idx(i => cs[i] > 700).length))],
+    ['Risky approved (score < 600)', intf(idx(i => isA[i] && cs[i] < 600).length)],
+    ['Risky approved (score < 600 and previous defaults ≥ 1)', intf(idx(i => isA[i] && cs[i] < 600 && C.previous_defaults[i] >= 1).length)],
+    [`Requested credit of qualified rejections (${cur})`, intf(qr.reduce((s, i) => s + C.loan_amount_requested[i], 0))],
+  ] }] });
+
+  // ---------------- defaults
+  const dSec = { title: 'Default rates (approved loans only)', notes: [`Overall: ${pc(defR)} of ${intf(ap.length)} approved loans.`], tables: [] };
+  const dtab = (title, keyFn, keys) => ({ title, columns: ['group', 'approved_loans', 'defaults', 'default_rate'], rows: keys.map(k => { const r = ap.filter(i => keyFn(i) === k); const d = r.filter(i => C.default_within_12m[i] === 'Yes').length; return [k, intf(r.length), intf(d), pc(r.length ? d / r.length : NaN)]; }) });
+  dSec.tables.push(dtab('By race', i => C.applicant_race[i], labelsOf('race')));
+  const band = v => v <= 500 ? '≤500' : v <= 600 ? '501-600' : v <= 700 ? '601-700' : v <= 800 ? '701-800' : '>800';
+  dSec.tables.push(dtab('By credit-score band', i => band(cs[i]), ['≤500', '501-600', '601-700', '701-800', '>800']));
+  dSec.tables.push(dtab('By employment', i => C.employment_status[i], labelsOf('emp')));
+  dSec.tables.push(dtab('By quarter', i => 'Q' + (Math.floor((parseInt(C.timestamp[i].slice(5, 7), 10) - 1) / 3) + 1), ['Q1', 'Q2', 'Q3', 'Q4']));
+  sections.push(dSec);
+
+  // ---------------- human review
+  const ovs = rev.filter(i => C.human_override[i] === 'Yes');
+  const anRows = meta.analysts.slice().sort((a, b) => a.exp - b.exp).map(a => {
+    const r = rev.filter(i => C.analyst_id[i] === a.id); const o = r.filter(i => C.human_override[i] === 'Yes').length;
+    const tag = meta.hiAnalysts.includes(a.id) ? 'high-override' : meta.loAnalysts.includes(a.id) ? 'rubber-stamp' : '';
+    return [a.id, a.exp, intf(r.length), intf(o), pc(r.length ? o / r.length : NaN), tag];
+  });
+  sections.push({ title: 'Human review and overrides', notes: [
+    `Reviewed: ${intf(rev.length)} (${pc(rev.length / N)}); fast-track N/A: ${intf(C.human_reviewed.filter(v => v === 'N/A').length)}.`,
+    `Overrides: ${intf(ovs.length)} (${pc(ovR)} of reviewed) — ${ovs.filter(i => C.ai_recommendation[i] === 'Approved').length} AI-approved → rejected, ${ovs.filter(i => C.ai_recommendation[i] === 'Rejected').length} AI-rejected → approved.`],
+    tables: [{ title: 'By analyst (sorted by experience)', columns: ['analyst_id', 'experience_months', 'reviews', 'overrides', 'override_rate', 'built-in behaviour'], rows: anRows },
+      { title: 'Reviewed share by race', columns: ['race', 'reviewed_%'], rows: labelsOf('race').map(g => { const r = idx(i => C.applicant_race[i] === g); return [g, pc(rate(r, i => hy[i]))]; }) }] });
+
+  // ---------------- explanations & complaints
+  const rej = idx(i => !isA[i]);
+  sections.push({ title: 'Explanations, complaints and SHAP fairness', notes: [
+    `Explanation provided: rejected ${pc(rate(rej, i => C.explanation_provided[i] === 'Yes'))}, approved ${pc(rate(ap, i => C.explanation_provided[i] === 'Yes'))}.`,
+    `Complaint rate: overall ${pc(rate(all, i => C.complaint_filed[i] === 'Yes'))}, rejected ${pc(rate(rej, i => C.complaint_filed[i] === 'Yes'))}, qualified rejected ${pc(rate(qr, i => C.complaint_filed[i] === 'Yes'))}.`],
+    tables: [{ title: 'By race', columns: ['race', 'explanation_rate_rejected', 'complaint_rate_rejected', 'mean_shap_fairness'], rows: labelsOf('race').map(g => {
+      const r = rej.filter(i => C.applicant_race[i] === g); const a = idx(i => C.applicant_race[i] === g);
+      return [g, pc(rate(r, i => C.explanation_provided[i] === 'Yes')), pc(rate(r, i => C.complaint_filed[i] === 'Yes')), f1(a.reduce((s, i) => s + C.shap_fairness_score[i], 0) / Math.max(1, a.length))]; }) }] });
+
+  // ---------------- numeric summary
+  const numCols = ['applicant_age', 'income_monthly', 'credit_score_traditional', 'social_media_score', 'digital_footprint_score', 'utility_payments_12m', 'previous_defaults', 'loan_amount_requested', 'decision_confidence', 'shap_fairness_score'];
+  sections.push({ title: 'Statistical summary (clean dataset)', notes: [], tables: [{ columns: ['column', 'mean', 'std', 'min', 'median', 'max'], rows: numCols.map(c => {
+    const v = C[c].slice().sort((a, b) => a - b); const m = v.reduce((a, b) => a + b, 0) / v.length; const sd = Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length);
+    return [c, f1(m), f1(sd), f1(v[0]), f1(v[Math.floor(v.length / 2)]), f1(v[v.length - 1])]; }) }] });
+
+  // ---------------- data quality
+  if (quality) {
+    const qRows = Object.keys(quality.summary).map(c => [c, intf(quality.summary[c].missing || 0), pc((quality.summary[c].missing || 0) / N), intf(quality.summary[c].outliers || 0), pc((quality.summary[c].outliers || 0) / N)]);
+    const kinds = {}; quality.log.forEach(r => { kinds[r[2]] = (kinds[r[2]] || 0) + 1; });
+    sections.push({ title: 'Injected data-quality issues', notes: [
+      `${intf(quality.log.length)} cells changed in total. Missing values are written as ${quality.marker === '' ? 'empty cells' : '"' + quality.marker + '"'}. Every change is listed in the anomaly log file (application_id, column, issue, original and new value).`,
+      'Structural blanks/"N/A" (analyst fields for non-reviewed rows, defaults for rejected rows) are part of the design and are NOT injected issues.'],
+      tables: [{ title: 'By column', columns: ['column', 'missing', 'missing_%', 'outliers', 'outliers_%'], rows: qRows.length ? qRows : [['(none)', '', '', '', '']] },
+        { title: 'By issue type', columns: ['issue', 'cells'], rows: Object.entries(kinds).map(([k, v]) => [k, intf(v)]) }] });
+  }
+  return { sections, checks };
+}
+
+function reportMarkdown(rep, cfg, meta) {
+  const out = [];
+  out.push(`# ${cfg.basics.bankName} – Synthetic Credit Scoring Dataset ${cfg.basics.year}: Summary and Validation Report\n`);
+  out.push(`> **SYNTHETIC DATA NOTICE.** ${cfg.basics.bankName}, the *${cfg.basics.systemName}* system and every record in this dataset are fictional. They were generated by a seeded program (seed ${cfg.basics.seed}) for academic use, are not real customer or bank records, and must not be cited as empirical evidence. Any discrimination patterns are injected by design through the generator settings.\n`);
+  if (meta.warnings.length) { out.push('**Generator warnings**\n'); meta.warnings.forEach(w => out.push('- ' + w)); out.push(''); }
+  rep.sections.forEach((s, k) => {
+    out.push(`## ${k + 1}. ${s.title}\n`);
+    s.notes.forEach(n => out.push(n + '\n'));
+    s.tables.forEach(t => {
+      if (t.title) out.push(`**${t.title}**\n`);
+      out.push('| ' + t.columns.join(' | ') + ' |'); out.push('|' + t.columns.map(() => '---').join('|') + '|');
+      t.rows.forEach(r => out.push('| ' + r.map(v => String(v).replace(/\|/g, '/')).join(' | ') + ' |'));
+      out.push('');
+    });
+  });
+  return out.join('\n');
+}
+
+if (typeof module !== 'undefined') module.exports = { buildReport, reportMarkdown };
+
+// ======================================================================
+// UI: schema-driven settings form with guidance, results and downloads
+// ======================================================================
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let cfg = loadDraft() || clone(DEFAULTS);
+let last = null;
+
+function loadDraft() { try { const s = localStorage.getItem('dsgen-cfg'); return s ? mergeDeep(clone(DEFAULTS), JSON.parse(s)) : null; } catch (e) { return null; } }
+function saveDraft() { try { localStorage.setItem('dsgen-cfg', JSON.stringify(cfg)); } catch (e) { } }
+function mergeDeep(t, s) {
+  if (!s || typeof s !== 'object') return t;
+  for (const k of Object.keys(t)) {
+    if (!(k in s)) continue;
+    if (Array.isArray(t[k])) { if (Array.isArray(s[k]) && s[k].length === t[k].length) t[k] = s[k]; }
+    else if (t[k] && typeof t[k] === 'object') {
+      if (k === 'cols') t[k] = (s[k] && typeof s[k] === 'object') ? s[k] : t[k];
+      else mergeDeep(t[k], s[k]);
+    } else t[k] = s[k];
+  }
+  return t;
+}
+const getP = (o, p) => p.split('.').reduce((a, k) => a == null ? a : a[k], o);
+function setP(o, p, v) { const ks = p.split('.'); const last = ks.pop(); const t = ks.reduce((a, k) => a[k] = a[k] || {}, o); t[last] = v; }
+
+// ---------------------------------------------------------------- schema helpers
+const lab = (set, k) => cfg.labels[set][k];
+const rowsOf = set => CATS[set].map(k => [k, () => lab(set, k)]);
+const Fn = {
+  num: (p, label, what, how, o = {}) => ({ t: 'num', p, label, what, how, ...o }),
+  text: (p, label, what, how, o = {}) => ({ t: 'text', p, label, what, how, ...o }),
+  sel: (p, label, what, how, options, o = {}) => ({ t: 'sel', p, label, what, how, options, ...o }),
+  bool: (p, label, what, how) => ({ t: 'bool', p, label, what, how }),
+  dist: (p, set, label, what, how) => ({ t: 'map', p, set, label, what, how, pct: true }),
+  map: (p, set, label, what, how, o = {}) => ({ t: 'map', p, set, label, what, how, ...o }),
+  mat: (p, rows, cols, label, what, how, o = {}) => ({ t: 'mat', p, rows, cols, label, what, how, ...o }),
+  list: (p, names, label, what, how) => ({ t: 'list', p, names, label, what, how }),
+  labels: (set, label, roles) => ({ t: 'labels', p: 'labels.' + set, set, label, roles }),
+  qcols: (p, list, label, what, how) => ({ t: 'qcols', p, list, label, what, how }),
+};
+const EFFECT = 'Each number is added to a hidden score: 0 = no effect, positive = more likely/higher, negative = less likely/lower. ±0.1 is small, ±0.3 moderate, ±0.6 or more strong.';
+const PCT = 'Enter percentages. They should add up to 100; if they don\'t, the tool rescales them automatically.';
+const LOGX = 'Effects are on the log-income scale: +0.10 ≈ +10% income, −0.20 ≈ −18%, +0.55 ≈ +73%. 0 = no difference.';
+const raceOpts = () => CATS.race.map(k => [k, lab('race', k)]);
+const neighOpts = () => CATS.neigh.map(k => [k, lab('neigh', k)]);
+const EMP_TERMS = [['base', () => 'Base propensity'], ['edu', () => 'Education effect (per level)'], ['u24', () => 'Age under 24'], ['prime', () => 'Age 25–55'], ['o35', () => 'Age 35 and over'], ['o60', () => 'Age 60 and over']];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const HOURS = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0') + 'h');
+const COL_DESC = {
+  timestamp: 'application date/time', applicant_age: 'age', applicant_gender: 'gender', applicant_race: 'race / ethnic group', applicant_region: 'region',
+  applicant_city_type: 'city type', neighborhood_type: 'neighbourhood', income_monthly: 'monthly income', employment_status: 'employment',
+  credit_score_traditional: 'bureau credit score', education_level: 'education', social_media_score: 'social media score', mobile_plan_type: 'mobile plan',
+  utility_payments_12m: 'on-time utility payments', previous_defaults: 'previous defaults', digital_footprint_score: 'digital footprint', application_channel: 'channel',
+  loan_amount_requested: 'loan amount', approval_decision: 'final decision', ai_recommendation: 'AI recommendation', decision_confidence: 'AI confidence',
+  explanation_provided: 'explanation given', human_reviewed: 'human review flag', human_override: 'override flag', analyst_id: 'analyst ID',
+  analyst_experience_months: 'analyst experience', complaint_filed: 'complaint flag', default_within_12m: 'default outcome', shap_fairness_score: 'SHAP fairness score',
+  disparate_impact_ratio: 'group DIR',
+};
+
+const SCHEMA = [
+  { id: 'basics', title: 'Dataset basics', intro: 'Size, names and reproducibility. Start here.', fields: [
+    Fn.num('basics.n', 'Number of applications (rows)', 'How many loan applications the dataset will contain.', 'Whole number from 100 to 200,000. 15,000 takes about a second; 100,000 a few seconds.', { min: 100, max: 200000, step: 100 }),
+    Fn.num('basics.seed', 'Random seed', 'The starting number for the random generator. The same seed with the same settings always produces exactly the same dataset.', 'Any whole number, e.g. 20251115. Change it to get a different dataset with the same statistical patterns (useful for giving each student group their own file).', { step: 1 }),
+    Fn.num('basics.year', 'Application year', 'Calendar year of all timestamps; also used inside each application ID.', 'Four-digit year, e.g. 2025.', { min: 1990, max: 2100, step: 1 }),
+    Fn.text('basics.bankName', 'Bank name', 'Name of the fictional bank, shown in the report title and synthetic-data notice.', 'Any text, e.g. "Banco Digital Aurora". Use a fictional name.'),
+    Fn.text('basics.systemName', 'AI system name', 'Name of the fictional credit-scoring AI, shown in the report.', 'Any text, e.g. "Oportunidade".'),
+    Fn.text('basics.idPrefix', 'Application ID prefix', 'Letters at the start of every application_id. IDs are built as prefix + year + sequence number, e.g. BDA202500001.', '2–6 letters or digits, no spaces (spaces are removed).'),
+    Fn.text('basics.currency', 'Currency symbol', 'Symbol used when the report shows money amounts. Income and loan values in the data are plain numbers.', 'Short text, e.g. R$, LKR, $, €.'),
+  ] },
+  { id: 'labels', title: 'Category labels', intro: 'The words written into the dataset for each category. Rename them to change the setting of the case (for example, Sri Lankan provinces instead of Brazilian regions). The number of categories is fixed; each slot keeps its role, and every effect you set elsewhere follows the slot, so renaming never changes the statistics.', fields: [
+    Fn.labels('region', 'Regions', { N: 'poorer region', NE: 'largest poorer region', SE: 'largest, richest region', S: 'richer region', CW: 'middle region' }),
+    Fn.labels('race', 'Race / ethnic groups', { W: 'reference group (advantaged)', AFRO: 'most-penalised group', MIX: 'large disadvantaged group', IND: 'small disadvantaged group', ASIA: 'small advantaged group' }),
+    Fn.labels('city', 'City types', { METRO: 'largest cities', URBAN: 'towns', SEMI: 'semi-urban', RURAL: 'rural' }),
+    Fn.labels('neigh', 'Neighbourhood types', { HIGH: 'wealthiest', MID: 'middle', LOW: 'poorer', FAV: 'most deprived / informal settlement' }),
+    Fn.labels('gender', 'Genders', { M: 'reference', F: 'target of the "women over age X" bias', NB: 'small group' }),
+    Fn.labels('edu', 'Education levels', { PRI: 'lowest', SEC: 'middle', TER: 'highest' }),
+    Fn.labels('emp', 'Employment status', { FORMAL: 'most secure', INFORMAL: 'insecure', SELF: 'self-employed', UNEMP: 'no job' }),
+    Fn.labels('plan', 'Mobile plan types', { PRE: 'cheapest', POST: 'middle', PREM: 'most expensive' }),
+    Fn.labels('channel', 'Application channels', { APP: 'used by digital, younger applicants', WEB: 'web', PARTNER: 'agents/partners, more rural' }),
+  ] },
+  { id: 'pop', title: 'Population mix', intro: 'Who applies: geography, ethnicity, neighbourhood, gender and age.', fields: [
+    Fn.dist('pop.region', 'region', 'Applicants by region', 'Share of all applicants living in each region.', PCT),
+    Fn.mat('pop.raceByRegion', 'region', 'race', 'Race / ethnic mix within each region', 'For each region (row), the share of applicants in each group (columns).', 'Enter percentages per row; each row should add up to 100 (rescaled automatically if not).', { pct: true }),
+    Fn.mat('pop.cityByRegion', 'region', 'city', 'City type within each region', 'For each region (row), the share of applicants living in each city type.', 'Percentages per row, each row adding up to 100.', { pct: true }),
+    Fn.mat('pop.neighByCity', 'city', 'neigh', 'Neighbourhood mix within each city type', 'Baseline share of each neighbourhood type for each city type, before the ethnic adjustment below.', 'Percentages per row adding up to 100. Enter 0 to make a combination impossible (default: no informal settlements in rural areas).', { pct: true }),
+    Fn.mat('pop.neighRaceMult', 'race', 'neigh', 'Neighbourhood segregation multipliers', 'How much more or less likely each group is to live in each neighbourhood type, compared with the baseline above.', 'Multipliers: 1 = same as baseline, 2 = twice as likely, 0.5 = half as likely, 0 = never. Set every cell to 1 to remove residential segregation.'),
+    Fn.dist('pop.gender', 'gender', 'Applicants by gender', 'Share of applicants of each gender.', PCT),
+    Fn.num('pop.age.min', 'Minimum age', 'Youngest possible applicant.', 'Whole number of years, e.g. 18.', { min: 0, max: 120 }),
+    Fn.num('pop.age.max', 'Maximum age', 'Oldest possible applicant.', 'Whole number of years, e.g. 75. Must be above the minimum.', { min: 0, max: 120 }),
+    Fn.num('pop.age.youngShare', 'Younger-group share (%)', 'Ages come from two overlapping groups: a younger one and an older one. This is the share in the younger group.', 'Percentage 0–100. 70 means most applicants are young adults.', { min: 0, max: 100, step: 1 }),
+    Fn.num('pop.age.youngMean', 'Younger group – average age', 'Typical age of the younger group.', 'Years, e.g. 32.', { step: 0.5 }),
+    Fn.num('pop.age.youngSd', 'Younger group – spread', 'How widely ages vary around the younger average (standard deviation).', 'Years, e.g. 8.5. Larger = wider range.', { min: 0.1, step: 0.5 }),
+    Fn.num('pop.age.oldMean', 'Older group – average age', 'Typical age of the older group.', 'Years, e.g. 50.', { step: 0.5 }),
+    Fn.num('pop.age.oldSd', 'Older group – spread', 'How widely ages vary around the older average.', 'Years, e.g. 10.', { min: 0.1, step: 0.5 }),
+  ] },
+  { id: 'edu', title: 'Education', intro: 'Education level is decided by a hidden score; the shares below set where the cut-offs fall.', fields: [
+    Fn.dist('edu.share', 'edu', 'Education level shares', 'Overall share of applicants at each education level.', PCT + ' The effects below decide who ends up at which level.'),
+    Fn.map('edu.neigh', 'neigh', 'Neighbourhood effect on education', 'How neighbourhood changes the chance of reaching a higher level.', EFFECT),
+    Fn.map('edu.race', 'race', 'Race / ethnic effect on education', 'Structural education gaps between groups.', EFFECT),
+    Fn.map('edu.region', 'region', 'Region effect on education', 'Education gaps between regions.', EFFECT),
+    Fn.map('edu.city', 'city', 'City-type effect on education', 'Education gaps between city types.', EFFECT),
+    Fn.num('edu.over60', 'Effect: age over 60', 'Older applicants studied when access to education was lower.', 'Effect number, e.g. −0.35. 0 = no age effect.', { step: 0.05 }),
+    Fn.num('edu.under23', 'Effect: age under 23', 'Young applicants may not have finished studying yet.', 'Effect number, e.g. −0.25.', { step: 0.05 }),
+  ] },
+  { id: 'emp', title: 'Employment', intro: 'Each applicant gets a propensity score for each employment status; the highest-scoring statuses are most likely. Read each table column by column: a cell adds to that column\'s status.', fields: [
+    Fn.mat('emp.terms', EMP_TERMS, 'emp', 'Base propensity and age/education effects', 'Row 1 sets how common each status is overall; the other rows adjust it by education and age.', 'Base propensity: higher = more common (defaults −0.10 formal down to −1.55 unemployed). Education effect is applied per level above/below the middle level. ' + EFFECT),
+    Fn.mat('emp.race', 'race', 'emp', 'Race / ethnic effects on employment', 'Labour-market gaps between groups.', EFFECT),
+    Fn.mat('emp.region', 'region', 'emp', 'Region effects on employment', 'How regional economies change employment chances.', EFFECT),
+    Fn.mat('emp.city', 'city', 'emp', 'City-type effects on employment', 'Urban/rural differences in employment.', EFFECT),
+    Fn.mat('emp.neigh', 'neigh', 'emp', 'Neighbourhood effects on employment', 'How neighbourhood changes employment chances.', EFFECT),
+  ] },
+  { id: 'income', title: 'Income', intro: 'Monthly income is built on a log scale from a median plus the effects below, then capped at the minimum and maximum.', fields: [
+    Fn.num('income.median', 'Typical monthly income', 'Income of an average applicant before any effects (roughly the median).', 'Plain number in your currency, e.g. 2900.', { min: 1, step: 100 }),
+    Fn.num('income.min', 'Minimum income', 'Lowest income allowed; lower values are raised to this.', 'Plain number, e.g. 400. Must be above 0.', { min: 1, step: 50 }),
+    Fn.num('income.max', 'Maximum income', 'Highest income allowed; higher values are capped.', 'Plain number, e.g. 80000.', { min: 1, step: 1000 }),
+    Fn.num('income.edu', 'Education effect (per level)', 'Income gain for each education level above the middle one (and loss below).', 'Log effect, e.g. 0.38 ≈ +46% per level.', { step: 0.01 }),
+    Fn.num('income.ageGrowth', 'Career growth with age', 'How much income rises from the minimum age through mid-career.', 'Log effect at full growth, e.g. 0.40 ≈ +49%.', { step: 0.01 }),
+    Fn.num('income.ageDecline', 'Decline per year after 55', 'Income drop for each year past 55.', 'Log effect per year, e.g. 0.008 ≈ −0.8% a year.', { step: 0.001 }),
+    Fn.num('income.noise', 'Random variation', 'Individual income differences not explained by the effects.', 'Standard deviation on the log scale, e.g. 0.55. Higher = more unequal, more extreme incomes.', { min: 0, step: 0.05 }),
+    Fn.num('income.noiseSelf', 'Random variation – self-employed', 'Self-employed incomes vary more.', 'Standard deviation on the log scale, e.g. 0.75.', { min: 0, step: 0.05 }),
+    Fn.map('income.emp', 'emp', 'Employment effect on income', 'Income differences by employment status.', LOGX),
+    Fn.map('income.neigh', 'neigh', 'Neighbourhood effect on income', 'Income differences by neighbourhood.', LOGX),
+    Fn.map('income.region', 'region', 'Region effect on income', 'Income differences by region.', LOGX),
+    Fn.map('income.city', 'city', 'City-type effect on income', 'Income differences by city type.', LOGX),
+    Fn.map('income.race', 'race', 'Race / ethnic pay gap', 'Structural income gap for otherwise similar applicants.', LOGX),
+    Fn.map('income.gender', 'gender', 'Gender pay gap', 'Structural income gap by gender.', LOGX),
+  ] },
+  { id: 'alt', title: 'Alternative data (proxies)', intro: 'Mobile plan, social media score and digital footprint. These reflect wealth, youth and urban living, which is why they act as proxies for protected characteristics.', fields: [
+    Fn.num('alt.plan.postBase', 'Postpaid – base propensity', 'How common postpaid plans are compared with prepaid (prepaid = 0).', 'Effect number, e.g. −0.60. Higher = more postpaid.', { step: 0.05 }),
+    Fn.num('alt.plan.postInc', 'Postpaid – income effect', 'How strongly higher income pushes towards postpaid.', 'Effect per standard deviation of income, e.g. 0.90.', { step: 0.05 }),
+    Fn.num('alt.plan.premBase', 'Premium – base propensity', 'How common premium plans are compared with prepaid.', 'Effect number, e.g. −2.30 (premium is rare).', { step: 0.05 }),
+    Fn.num('alt.plan.premInc', 'Premium – income effect', 'How strongly higher income pushes towards premium.', 'Effect per standard deviation of income, e.g. 1.50.', { step: 0.05 }),
+    Fn.num('alt.plan.premHigh', 'Premium – wealthiest-neighbourhood bonus', () => `Extra premium propensity for applicants in "${lab('neigh', 'HIGH')}" areas.`, 'Effect number, e.g. 0.30.', { step: 0.05 }),
+    Fn.num('alt.plan.edu', 'Plan – education effect', 'Higher education slightly raises postpaid/premium take-up.', 'Effect per education level, e.g. 0.15.', { step: 0.05 }),
+    Fn.num('alt.ageRef', 'Digital age pivot', 'Age at which the age effect on social/digital scores switches from bonus to penalty.', 'Years, e.g. 35.', { step: 1 }),
+    Fn.num('alt.ageYoungRate', 'Youth bonus per year', 'Points gained per year younger than the pivot age.', 'Points per year, e.g. 0.25.', { step: 0.05 }),
+    Fn.num('alt.ageOldRate', 'Older penalty per year', 'Points lost per year older than the pivot age.', 'Points per year, e.g. 0.40.', { step: 0.05 }),
+    Fn.num('alt.social.base', 'Social media score – baseline', 'Average social media score (1–100 scale) before effects.', 'Points, e.g. 47.', { step: 1 }),
+    Fn.num('alt.social.inc', 'Social media – income effect', 'Points added per standard deviation of income.', 'Points, e.g. 10. 0 = income has no influence.', { step: 0.5 }),
+    Fn.num('alt.social.edu', 'Social media – education effect', 'Points per education level.', 'Points, e.g. 0.', { step: 0.5 }),
+    Fn.num('alt.social.ageW', 'Social media – age-effect strength', 'Multiplier on the youth bonus / older penalty above.', '1 = full effect, 0 = no age effect.', { step: 0.1 }),
+    Fn.num('alt.social.affinity', 'Social media – digital affinity', 'Points from a hidden "digital affinity" trait shared with the digital footprint (makes the two scores correlated).', 'Points per standard deviation, e.g. 9.', { step: 0.5 }),
+    Fn.num('alt.social.noise', 'Social media – random variation', 'Individual variation in points.', 'Standard deviation in points, e.g. 11.', { min: 0, step: 0.5 }),
+    Fn.map('alt.social.plan', 'plan', 'Social media – mobile plan effect', 'Points added for each plan type.', 'Points on the 1–100 scale, e.g. −2 prepaid, +4 premium.'),
+    Fn.map('alt.social.city', 'city', 'Social media – city-type effect', 'Points added for each city type.', 'Points on the 1–100 scale.'),
+    Fn.map('alt.social.neigh', 'neigh', 'Social media – neighbourhood effect', 'Points added for each neighbourhood type.', 'Points on the 1–100 scale.'),
+    Fn.num('alt.digital.base', 'Digital footprint – baseline', 'Average digital footprint score (1–100) before effects.', 'Points, e.g. 50.', { step: 1 }),
+    Fn.num('alt.digital.inc', 'Digital footprint – income effect', 'Points per standard deviation of income.', 'Points, e.g. 6.', { step: 0.5 }),
+    Fn.num('alt.digital.edu', 'Digital footprint – education effect', 'Points per education level.', 'Points, e.g. 3.', { step: 0.5 }),
+    Fn.num('alt.digital.ageW', 'Digital footprint – age-effect strength', 'Multiplier on the youth bonus / older penalty.', '0.6 = 60% of the full age effect.', { step: 0.1 }),
+    Fn.num('alt.digital.affinity', 'Digital footprint – digital affinity', 'Points from the shared hidden digital-affinity trait.', 'Points per standard deviation, e.g. 8.', { step: 0.5 }),
+    Fn.num('alt.digital.noise', 'Digital footprint – random variation', 'Individual variation in points.', 'Standard deviation in points, e.g. 9.', { min: 0, step: 0.5 }),
+    Fn.map('alt.digital.plan', 'plan', 'Digital footprint – mobile plan effect', 'Points added for each plan type.', 'Points on the 1–100 scale.'),
+    Fn.map('alt.digital.city', 'city', 'Digital footprint – city-type effect', 'Points added for each city type.', 'Points on the 1–100 scale, e.g. −7 rural.'),
+    Fn.map('alt.digital.neigh', 'neigh', 'Digital footprint – neighbourhood effect', 'Points added for each neighbourhood type.', 'Points on the 1–100 scale, e.g. −8 for the most deprived areas.'),
+  ] },
+  { id: 'credit', title: 'Credit history', intro: 'A hidden "repayment discipline" trait drives on-time utility payments, previous defaults and the bureau credit score, so these three genuinely predict default.', fields: [
+    Fn.num('credit.repayInc', 'Income link to repayment discipline', 'How much richer applicants tend to repay better.', 'Effect per standard deviation of income, e.g. 0.15. 0 = discipline unrelated to income.', { step: 0.05 }),
+    Fn.num('credit.utilMonths', 'Utility history length (months)', 'Number of months of utility bills counted (the maximum value of utility_payments_12m).', 'Whole number, e.g. 12.', { min: 1, max: 60, step: 1 }),
+    Fn.num('credit.utilBase', 'On-time payments – baseline', 'How reliably the average applicant pays bills.', 'Log-odds, e.g. 1.9 ≈ 87% of bills on time. Higher = more on-time payments.', { step: 0.1 }),
+    Fn.num('credit.utilRepay', 'On-time payments – discipline effect', 'How strongly repayment discipline shows in bill payments.', 'Effect per standard deviation, e.g. 0.75.', { step: 0.05 }),
+    Fn.num('credit.utilInc', 'On-time payments – income effect', 'Richer applicants pay bills more reliably.', 'Effect per standard deviation of income, e.g. 0.30.', { step: 0.05 }),
+    Fn.map('credit.utilEmp', 'emp', 'On-time payments – employment effect', 'Bill-payment reliability by employment.', EFFECT),
+    Fn.num('credit.prevBase', 'Previous defaults – baseline', 'How common past loan defaults are.', 'Log of the average count, e.g. −1.90 ≈ 0.15 defaults per person. Higher (towards 0) = more past defaults.', { step: 0.1 }),
+    Fn.num('credit.prevRepay', 'Previous defaults – discipline effect', 'Disciplined applicants have fewer past defaults.', 'Effect per standard deviation, e.g. −0.70 (negative = fewer).', { step: 0.05 }),
+    Fn.num('credit.prevInc', 'Previous defaults – income effect', 'Income effect on past defaults.', 'Effect per standard deviation of income, e.g. −0.15.', { step: 0.05 }),
+    Fn.num('credit.prevAge30', 'Previous defaults – over 30 effect', 'Older applicants have had more time to default.', 'Effect, e.g. 0.15.', { step: 0.05 }),
+    Fn.num('credit.prevMax', 'Previous defaults – maximum', 'Largest count allowed.', 'Whole number, e.g. 5.', { min: 0, max: 50, step: 1 }),
+    Fn.map('credit.prevEmp', 'emp', 'Previous defaults – employment effect', 'Past-default frequency by employment.', EFFECT),
+    Fn.num('credit.scoreBase', 'Credit score – baseline', 'Score of an average applicant.', 'Points, e.g. 585.', { step: 5 }),
+    Fn.num('credit.scoreRepay', 'Credit score – discipline effect', 'Points per standard deviation of repayment discipline. This is what makes the score predictive.', 'Points, e.g. 92.', { step: 1 }),
+    Fn.num('credit.scoreInc', 'Credit score – income effect', 'Points per standard deviation of income.', 'Points, e.g. 45.', { step: 1 }),
+    Fn.num('credit.scorePrev', 'Credit score – per previous default', 'Points per past default.', 'Points, e.g. −55.', { step: 1 }),
+    Fn.num('credit.scoreUtil', 'Credit score – per on-time payment', 'Points per on-time payment above/below normal.', 'Points, e.g. 9.', { step: 0.5 }),
+    Fn.num('credit.scoreAge', 'Credit score – per year of age', 'Points per year of age (up to 60), relative to age 35.', 'Points, e.g. 0.9.', { step: 0.1 }),
+    Fn.num('credit.scoreNoise', 'Credit score – random variation', 'Unexplained variation in the score.', 'Standard deviation in points, e.g. 38.', { min: 0, step: 1 }),
+    Fn.num('credit.scoreMin', 'Credit score – minimum', 'Lowest score allowed.', 'Points, e.g. 100.', { step: 10 }),
+    Fn.num('credit.scoreMax', 'Credit score – maximum', 'Highest score allowed.', 'Points, e.g. 980 (scale up to 1000).', { step: 10 }),
+    Fn.map('credit.scoreEmp', 'emp', 'Credit score – employment effect', 'Points added for each employment status.', 'Points, e.g. +18 formal, −40 unemployed.'),
+  ] },
+  { id: 'loan', title: 'Loan request and channel', intro: 'Requested amount scales with income; channel depends on digital footprint, age and location.', fields: [
+    Fn.num('loan.median', 'Typical loan amount', 'Amount requested by an applicant on the typical income.', 'Plain number, e.g. 5500.', { min: 1, step: 100 }),
+    Fn.num('loan.incElast', 'Income elasticity', 'How fast the request grows with income.', '0.65 means 10% more income → about 6.5% bigger request. 0 = unrelated to income; 1 = proportional.', { step: 0.05 }),
+    Fn.num('loan.noise', 'Random variation', 'Individual variation in loan size.', 'Standard deviation on the log scale, e.g. 0.75.', { min: 0, step: 0.05 }),
+    Fn.num('loan.min', 'Minimum loan', 'Smallest request allowed.', 'Plain number, e.g. 500.', { min: 1, step: 50 }),
+    Fn.num('loan.max', 'Maximum loan', 'Largest request allowed.', 'Plain number, e.g. 150000.', { min: 1, step: 1000 }),
+    Fn.num('loan.round', 'Round to nearest', 'Requested amounts are rounded to multiples of this.', 'Plain number, e.g. 50. Use 1 for no rounding.', { min: 1, step: 1 }),
+    Fn.num('channel.appDigital', 'App – digital footprint effect', 'How strongly a high digital footprint leads to the app channel.', EFFECT, { step: 0.05 }),
+    Fn.num('channel.appYoung', 'App – under-35 effect', 'Extra pull to the app for under-35s.', EFFECT, { step: 0.05 }),
+    Fn.num('channel.webBase', 'Web – base propensity', 'How common the web channel is relative to the app (app = 0).', 'Effect number, e.g. −0.90.', { step: 0.05 }),
+    Fn.num('channel.webDigital', 'Web – digital footprint effect', 'Digital footprint effect on web use.', EFFECT, { step: 0.05 }),
+    Fn.num('channel.partnerBase', 'Partner – base propensity', 'How common the partner/agent channel is relative to the app.', 'Effect number, e.g. −1.40.', { step: 0.05 }),
+    Fn.num('channel.partnerDigital', 'Partner – digital footprint effect', 'Low-digital applicants use partners more (negative value).', EFFECT, { step: 0.05 }),
+    Fn.num('channel.partnerNonUrban', 'Partner – semi-urban/rural effect', 'Extra partner use outside cities.', EFFECT, { step: 0.05 }),
+    Fn.num('channel.partnerFavela', () => `Partner – "${lab('neigh', 'FAV')}" effect`, 'Extra partner use in the most deprived neighbourhoods.', EFFECT, { step: 0.05 }),
+  ] },
+  { id: 'time', title: 'Application timing', intro: 'Relative weights for when applications arrive.', fields: [
+    Fn.list('time.month', MONTHS, 'Monthly weights', 'How busy each month is.', 'Relative weights: 1 = normal, 1.25 = 25% busier, 0.85 = 15% quieter, 0 = no applications that month.'),
+    Fn.list('time.dow', DOW, 'Day-of-week weights', 'How busy each weekday is.', 'Relative weights, e.g. weekdays ~1.1, Sunday 0.4.'),
+    Fn.list('time.hour', HOURS, 'Hour-of-day weights', 'How busy each hour is (00h = midnight).', 'Relative weights; only the proportions matter, e.g. 3.0 at 11h is ten times busier than 0.3 at 01h.'),
+  ] },
+  { id: 'ai', title: 'AI decision model', intro: 'The AI approves when its hidden score is above zero. The score = creditworthiness factors + proxy factors + bias terms + noise, then calibrated to the approval targets. Race is never an input; disparities come from proxies, bias terms and the targets.', fields: [
+    Fn.num('ai.legit.score', 'Weight: credit score', 'How much the bureau credit score counts.', 'Weight per standard deviation, e.g. 1.20. Higher = decisions follow the score more closely.', { step: 0.05 }),
+    Fn.num('ai.legit.prev', 'Weight: previous defaults', 'Penalty per previous default (counted up to 3).', 'Negative weight, e.g. −0.75.', { step: 0.05 }),
+    Fn.num('ai.legit.util', 'Weight: on-time utility payments', 'How much bill-payment history counts.', 'Weight per standard deviation, e.g. 0.30.', { step: 0.05 }),
+    Fn.num('ai.legit.lti', 'Weight: loan-to-income', 'Penalty for asking a lot relative to income.', 'Negative weight per standard deviation, e.g. −0.38.', { step: 0.05 }),
+    Fn.num('ai.legit.income', 'Weight: income', 'How much higher income helps.', 'Weight per standard deviation, e.g. 0.35.', { step: 0.05 }),
+    Fn.map('ai.legit.emp', 'emp', 'Weight: employment status', 'Score added for each employment status.', EFFECT),
+    Fn.num('ai.proxy.digital', 'Proxy weight: digital footprint', 'How much the AI rewards a high digital footprint. A main source of indirect discrimination.', 'Weight per standard deviation, e.g. 0.60. Set to 0 to remove this proxy.', { step: 0.05 }),
+    Fn.num('ai.proxy.social', 'Proxy weight: social media score', 'How much the AI rewards social media activity.', 'Weight per standard deviation, e.g. 0.45. 0 removes it.', { step: 0.05 }),
+    Fn.map('ai.proxy.plan', 'plan', 'Proxy weight: mobile plan', 'Score added for each plan type.', EFFECT + ' All 0 removes this proxy.'),
+    Fn.map('ai.proxy.neigh', 'neigh', 'Proxy weight: neighbourhood', 'Score added for each neighbourhood ("postcode lending").', EFFECT + ' All 0 removes this proxy.'),
+    Fn.map('ai.proxy.region', 'region', 'Proxy weight: region', 'Score added for each region.', EFFECT),
+    Fn.num('ai.bias.womenAge', 'Age threshold for the women bias', () => `"${lab('gender', 'F')}" applicants older than this receive the penalties below.`, 'Years, e.g. 40.', { step: 1 }),
+    Fn.num('ai.bias.women', () => `Bias: ${lab('gender', 'F')} over the threshold age`, 'Hidden penalty learned from biased historical decisions.', 'Negative effect, e.g. −0.35. 0 = no gender-age bias.', { step: 0.05 }),
+    Fn.map('ai.bias.womenRace', 'race', () => `Extra bias for ${lab('gender', 'F')} over the threshold, by group`, 'Additional penalty that stacks on top for each group (intersectional bias).', 'Negative effect, e.g. −0.40 for the most-penalised group; 0 = none.'),
+    Fn.map('ai.bias.womenNeigh', 'neigh', () => `Extra bias for ${lab('gender', 'F')} over the threshold, by neighbourhood`, 'Additional penalty by neighbourhood.', 'Negative effect, e.g. −0.10.'),
+    Fn.sel('ai.bias.tripleRace', 'Triple-intersection: group', 'Group used for the triple-intersection penalty (gender + age + group + neighbourhood).', 'Pick one group.', raceOpts),
+    Fn.sel('ai.bias.tripleNeigh', 'Triple-intersection: neighbourhood', 'Neighbourhood used for the triple-intersection penalty.', 'Pick one neighbourhood type.', neighOpts),
+    Fn.num('ai.bias.triple', 'Triple-intersection penalty', 'Extra penalty for women over the threshold who are in the chosen group and neighbourhood.', 'Negative effect, e.g. −0.15.', { step: 0.05 }),
+    Fn.num('ai.bias.nonBinary', () => `Bias: ${lab('gender', 'NB')}`, 'Hidden penalty for this gender group.', 'Effect, e.g. −0.20. 0 = none.', { step: 0.05 }),
+    Fn.num('ai.bias.youngAge', 'Young thin-file age (under)', 'Applicants younger than this get the young penalty.', 'Years, e.g. 22.', { step: 1 }),
+    Fn.num('ai.bias.young', 'Bias: young applicants', 'Penalty for short credit histories.', 'Effect, e.g. −0.30.', { step: 0.05 }),
+    Fn.num('ai.bias.oldAge', 'Older age (over)', 'Applicants older than this get the older penalty.', 'Years, e.g. 60.', { step: 1 }),
+    Fn.num('ai.bias.old', 'Bias: older applicants', 'Penalty for older applicants.', 'Effect, e.g. −0.25.', { step: 0.05 }),
+    Fn.num('ai.noise', 'Decision noise', 'Randomness in AI decisions not explained by any factor.', 'Standard deviation, e.g. 0.85. Higher = less consistent decisions.', { min: 0, step: 0.05 }),
+    Fn.num('ai.targets.overall', 'Target: overall approval (%)', 'Share of all applications the AI should approve.', 'Percentage, e.g. 34. Only applied when the reference group has a target and at least one group is left blank (free).', { min: 0, max: 100, step: 0.5, blankOk: true }),
+    Fn.sel('ai.targets.refRace', 'Reference group', 'Group the others are compared against (DIR = group rate ÷ this group\'s rate).', 'Pick one group, usually the advantaged one.', raceOpts),
+    Fn.map('ai.targets.race', 'race', 'Target approval rate by group (%)', 'Approval rate the AI should reach for each group. The tool solves hidden offsets to hit these exactly.', 'Percentage per group, e.g. 46 and 18. Leave a box EMPTY to make that group "free": free groups share one adjustment so the overall target is met. Leave every box empty and the overall target empty to let rates arise naturally from the other settings.', { blankOk: true }),
+    Fn.map('ai.targets.freeWeight', 'race', 'Free-group adjustment share', 'For free groups only: how much of the shared adjustment each one receives.', '1 = full adjustment, 0.6 = 60% of it, 0 = none. Ignored for groups that have their own target.'),
+    Fn.num('ai.confScale', 'Confidence scale', 'How quickly AI confidence rises as the score moves away from the decision line.', 'Positive number, e.g. 2.8. Smaller = higher confidence overall.', { min: 0.1, step: 0.1 }),
+  ] },
+  { id: 'review', title: 'Human review', intro: 'A small share of AI decisions is sent to analysts, who may reverse them.', fields: [
+    Fn.num('review.share', 'Share of applications reviewed (%)', 'Percentage of all applications that an analyst reviews.', 'Percentage, e.g. 2.1.', { min: 0, max: 100, step: 0.1 }),
+    Fn.num('review.fastLoan', 'Fast-track: maximum loan', 'AI-approved loans up to this amount with high confidence skip review entirely (human_reviewed = N/A).', 'Plain number, e.g. 1500. Use 0 to switch fast-track off.', { min: 0, step: 100 }),
+    Fn.num('review.fastConf', 'Fast-track: minimum confidence', 'Confidence an AI approval needs to be fast-tracked.', 'Number 50–100, e.g. 80.', { min: 50, max: 100, step: 1 }),
+    Fn.num('review.base', 'Selection: base weight', 'Every eligible application has at least this chance weight of being picked.', 'Positive number, e.g. 0.25.', { min: 0, step: 0.05 }),
+    Fn.num('review.border', 'Selection: borderline weight', 'Extra weight for applications close to the decision line.', 'Positive number, e.g. 3. Higher = review focuses on borderline cases.', { min: 0, step: 0.1 }),
+    Fn.num('review.strongScore', 'Strong-profile score', 'Credit score at or above which an AI rejection counts as a "strong-profile rejection".', 'Points, e.g. 700.', { step: 10 }),
+    Fn.num('review.strongMult', 'Selection: strong-profile rejection ×', 'How much more likely such rejections are sent for review.', 'Multiplier, e.g. 2.2; 1 = no extra.', { min: 0, step: 0.1 }),
+    Fn.num('review.weakScore', 'Weak-profile score', 'Credit score below which an AI approval with a previous default counts as a "weak-profile approval".', 'Points, e.g. 600.', { step: 10 }),
+    Fn.num('review.weakMult', 'Selection: weak-profile approval ×', 'How much more likely such approvals are reviewed.', 'Multiplier, e.g. 2.0.', { min: 0, step: 0.1 }),
+    Fn.num('review.largeLoan', 'Large-loan threshold', 'Loans above this are more likely to be reviewed.', 'Plain number, e.g. 20000.', { min: 0, step: 1000 }),
+    Fn.num('review.largeMult', 'Selection: large loan ×', 'Extra review likelihood for large loans.', 'Multiplier, e.g. 1.5.', { min: 0, step: 0.1 }),
+    Fn.num('review.analysts', 'Number of analysts', 'How many analysts share the reviews (IDs ANL001, ANL002…).', 'Whole number, e.g. 20.', { min: 1, max: 500, step: 1 }),
+    Fn.num('review.expMin', 'Least experience (months)', 'Experience of the most junior analyst.', 'Months, e.g. 4.', { min: 0, step: 1 }),
+    Fn.num('review.expMax', 'Most experience (months)', 'Experience of the most senior analyst. Others are spread between the two.', 'Months, e.g. 174.', { min: 0, step: 1 }),
+    Fn.num('review.minPerAnalyst', 'Minimum reviews per analyst', 'Each analyst gets at least this many reviews, if the total allows.', 'Whole number, e.g. 5.', { min: 0, step: 1 }),
+    Fn.num('review.targetOverride', 'Target override rate (%)', 'Share of reviewed cases where the analyst reverses the AI.', 'Percentage, e.g. 14.', { min: 0, max: 100, step: 0.5 }),
+    Fn.num('review.effSd', 'Analyst personal variation', 'Random differences in how willing analysts are to override.', 'Standard deviation, e.g. 0.30.', { min: 0, step: 0.05 }),
+    Fn.num('review.highN', 'High-override analysts', 'Number of analysts who reverse the AI much more often.', 'Whole number, e.g. 3. 0 = none.', { min: 0, step: 1 }),
+    Fn.num('review.highMinExp', 'High-override minimum experience', 'High-override analysts are chosen from those with at least this experience.', 'Months, e.g. 30.', { min: 0, step: 1 }),
+    Fn.num('review.highEff', 'High-override strength', 'How much more these analysts override.', 'Positive effect, e.g. 1.2.', { step: 0.1 }),
+    Fn.num('review.lowN', 'Rubber-stamp analysts', 'Number of analysts who almost always agree with the AI.', 'Whole number, e.g. 2.', { min: 0, step: 1 }),
+    Fn.num('review.lowEff', 'Rubber-stamp strength', 'How much less these analysts override.', 'Negative effect, e.g. −1.2.', { step: 0.1 }),
+    Fn.num('review.wExp', 'Experience effect on overriding', 'Senior analysts override more, juniors defer.', 'Effect per 50 months of experience, e.g. 0.6. 0 = experience irrelevant.', { step: 0.05 }),
+    Fn.num('review.wStrongRej', 'Override: strong-profile rejection', 'How likely analysts are to approve an AI rejection with a strong score.', EFFECT, { step: 0.1 }),
+    Fn.num('review.cleanScore', 'Clean-record score', 'Score at or above which a rejected applicant with no past default counts as "clean".', 'Points, e.g. 650.', { step: 10 }),
+    Fn.num('review.wCleanRej', 'Override: clean-record rejection', 'Extra push to reverse rejections of clean records.', EFFECT, { step: 0.1 }),
+    Fn.num('review.wWeakAppr', 'Override: weak-profile approval', 'How likely analysts are to reject a weak-profile AI approval.', EFFECT, { step: 0.1 }),
+    Fn.num('review.lowConf', 'Low-confidence threshold', 'AI confidence below which analysts feel freer to override.', 'Number 50–100, e.g. 65.', { min: 50, max: 100, step: 1 }),
+    Fn.num('review.wLowConf', 'Override: low confidence', 'Extra override push for low-confidence AI decisions.', EFFECT, { step: 0.1 }),
+  ] },
+  { id: 'expl', title: 'Explanations and complaints', intro: 'Whether applicants receive an adequate explanation, and whether they complain.', fields: [
+    Fn.num('expl.base', 'Explanation – baseline', 'How often an explanation is given in general.', 'Log-odds, e.g. −1.60 ≈ 17% before other effects. Higher = more explanations.', { step: 0.1 }),
+    Fn.num('expl.approved', 'Explanation – approved effect', 'Approved applicants receive explanations more often.', EFFECT, { step: 0.1 }),
+    Fn.num('expl.reviewed', 'Explanation – human-reviewed effect', 'Reviewed cases receive explanations more often.', EFFECT, { step: 0.1 }),
+    Fn.num('expl.women', () => `Explanation – ${lab('gender', 'F')} over threshold age`, 'Effect for women over the bias threshold age.', EFFECT, { step: 0.05 }),
+    Fn.num('expl.noise', 'Explanation – random variation', 'Unexplained variation.', 'Standard deviation, e.g. 0.35.', { min: 0, step: 0.05 }),
+    Fn.map('expl.edu', 'edu', 'Explanation – education effect', 'Better-educated applicants get explanations more often.', EFFECT),
+    Fn.map('expl.race', 'race', 'Explanation – group effect', 'Unequal explanation rates between groups.', EFFECT),
+    Fn.map('expl.neigh', 'neigh', 'Explanation – neighbourhood effect', 'Unequal explanation rates by neighbourhood.', EFFECT),
+    Fn.map('expl.channel', 'channel', 'Explanation – channel effect', 'Explanation rates by application channel.', EFFECT),
+    Fn.num('complaint.base', 'Complaint – baseline', 'How rare complaints are in general.', 'Log-odds, e.g. −5.2 ≈ 0.5%. Higher (towards 0) = more complaints.', { step: 0.1 }),
+    Fn.num('complaint.rejected', 'Complaint – rejected effect', 'Rejected applicants complain more.', EFFECT, { step: 0.1 }),
+    Fn.num('complaint.noExpl', 'Complaint – no explanation effect', 'No explanation increases complaints.', EFFECT, { step: 0.1 }),
+    Fn.num('complaint.qualScore', 'Complaint – qualified score', 'Rejected applicants at or above this score count as "qualified".', 'Points, e.g. 700.', { step: 10 }),
+    Fn.num('complaint.qualRej', 'Complaint – qualified rejection effect', 'Qualified applicants who were rejected complain more.', EFFECT, { step: 0.1 }),
+    Fn.num('complaint.women', () => `Complaint – rejected ${lab('gender', 'F')} over threshold age`, 'Extra complaint tendency.', EFFECT, { step: 0.05 }),
+    Fn.num('complaint.overrideRej', 'Complaint – rejected by analyst override', 'Applicants rejected by a human reversal complain more.', EFFECT, { step: 0.1 }),
+    Fn.num('complaint.noise', 'Complaint – random variation', 'Unexplained variation.', 'Standard deviation, e.g. 0.35.', { min: 0, step: 0.05 }),
+    Fn.map('complaint.race', 'race', 'Complaint – group effect (rejected only)', 'Extra complaint tendency among rejected applicants by group.', EFFECT),
+    Fn.map('complaint.neigh', 'neigh', 'Complaint – neighbourhood effect (rejected only)', 'Extra complaint tendency among rejected applicants by neighbourhood.', EFFECT),
+  ] },
+  { id: 'def', title: 'Loan defaults', intro: 'Default within 12 months, for approved loans only. It depends on genuine credit factors only, never on digital or social scores.', fields: [
+    Fn.num('def.target', 'Target default rate (%)', 'Share of approved loans that default. The tool calibrates to hit this exactly.', 'Percentage, e.g. 11.4.', { min: 0, max: 100, step: 0.1 }),
+    Fn.num('def.score', 'Effect: credit score', 'Higher scores default less.', 'Negative effect per standard deviation, e.g. −0.85.', { step: 0.05 }),
+    Fn.num('def.prev', 'Effect: per previous default', 'Each past default raises risk.', 'Effect, e.g. 0.45.', { step: 0.05 }),
+    Fn.num('def.prevCap', 'Previous defaults counted up to', 'Past defaults above this count are treated as this number.', 'Whole number, e.g. 4.', { min: 0, step: 1 }),
+    Fn.num('def.lti', 'Effect: loan-to-income', 'Bigger loans relative to income default more.', 'Effect per standard deviation, e.g. 0.40.', { step: 0.05 }),
+    Fn.num('def.util', 'Effect: per on-time utility payment', 'Good bill payers default less.', 'Negative effect per payment, e.g. −0.12.', { step: 0.01 }),
+    Fn.num('def.repay', 'Effect: hidden repayment discipline', 'Risk explained only by the hidden trait (not visible to anyone).', 'Negative effect, e.g. −0.35.', { step: 0.05 }),
+    Fn.map('def.emp', 'emp', 'Effect: employment status', 'Default risk by employment.', EFFECT),
+    Fn.num('def.wealthyIncome', 'Wealthy income threshold', () => `Applicants with income at or above this, or living in "${lab('neigh', 'HIGH')}" areas, count as wealthy.`, 'Plain number, e.g. 9000.', { min: 0, step: 500 }),
+    Fn.num('def.weakScore', 'Weak-history score', 'Score below which (or with any past default) history counts as weak.', 'Points, e.g. 600.', { step: 10 }),
+    Fn.num('def.wealthyWeak', 'Effect: wealthy with weak history', 'Extra risk for wealthy applicants with weak records (approved because of their profile, not their history).', 'Effect, e.g. 0.30.', { step: 0.05 }),
+    Fn.num('def.drift', 'Risk trend through the year', 'Default risk rises from January to December by this amount.', 'Effect, e.g. 0.35 (≈ Q1 9% → Q4 13%). 0 = flat; negative = falling risk.', { step: 0.05 }),
+    Fn.num('def.noise', 'Random variation', 'Unexplained variation in default risk.', 'Standard deviation, e.g. 0.45.', { min: 0, step: 0.05 }),
+  ] },
+  { id: 'shap', title: 'SHAP fairness score', intro: 'A synthetic indicator from 1 to 100: 100 = decision driven only by creditworthiness; lower = proxy features pushed the decision.', fields: [
+    Fn.num('shap.harm', 'Penalty when proxies hurt the applicant', 'Maximum points removed when proxy features pushed the decision against the applicant.', 'Points, e.g. 90.', { min: 0, max: 100, step: 1 }),
+    Fn.num('shap.gain', 'Penalty when proxies helped the applicant', 'Maximum points removed when proxies gave an unearned advantage.', 'Points, e.g. 25.', { min: 0, max: 100, step: 1 }),
+    Fn.num('shap.noise', 'Random variation', 'Measurement noise in points.', 'Standard deviation in points, e.g. 3.', { min: 0, step: 0.5 }),
+  ] },
+  { id: 'quality', title: 'Data quality: outliers and missing values', intro: 'Makes the dataset look like real, imperfect bank data. Changes are made to a COPY: you can still download the clean file and an anomaly log that lists every changed cell (useful as an answer key). Outliers are added first, then missing values, and the same cell never receives both.', fields: [
+    Fn.num('quality.seedOffset', 'Data-quality seed', 'Separate random number for picking which cells are changed. The core data stays the same when you change it.', 'Any whole number, e.g. 1. Change it to move the outliers/blanks to different rows.', { step: 1 }),
+    Fn.bool('quality.outliers.enabled', 'Add outliers', 'Switch outlier injection on or off.', 'Tick to add outliers using the settings below.'),
+    Fn.sel('quality.outliers.style', 'Outlier type', 'What kind of unusual values to create.', '"Statistical extremes" = values far outside the normal range (mean ± k × SD). "Data-entry errors" = typical mistakes: an extra zero (×10), a dropped digit (÷10), a minus sign, 0, −1 or a placeholder such as 999. "Mixed" = half of each.',
+      () => [['statistical', 'Statistical extremes'], ['entry', 'Data-entry errors'], ['mixed', 'Mixed (both)']]),
+    Fn.sel('quality.outliers.direction', 'Outlier direction', 'Whether outliers are unusually high, unusually low, or both.', 'Pick one.', () => [['both', 'Both high and low'], ['high', 'High only'], ['low', 'Low only']]),
+    Fn.num('quality.outliers.magnitude', 'Outlier distance (k)', 'For statistical extremes: how many standard deviations from the mean (income and loan amounts use the log scale). Each outlier gets a random distance between k and 1.5k.', 'Number from 2 to 15, e.g. 5. Larger = more obvious outliers.', { min: 1, max: 50, step: 0.5 }),
+    Fn.qcols('quality.outliers.cols', Object.keys(NUM_COLS), 'Outliers per column (% of rows)', 'Which numeric columns receive outliers and how many.', 'Percentage of that column\'s values to turn into outliers, e.g. 0.5 = 1 in 200 rows. 0 or empty = none. Real data usually has well under 1%.'),
+    Fn.bool('quality.missing.enabled', 'Add missing values', 'Switch missing-value injection on or off.', 'Tick to blank out cells using the settings below.'),
+    Fn.sel('quality.missing.marker', 'How missing values are written', 'The text written in the CSV where a value is missing.', 'Empty cell is the most common. "NA", "NULL", "?" or "-" mimic exports from other systems and test whether data cleaning catches them.',
+      () => [['', 'Empty cell'], ['NA', 'NA'], ['NULL', 'NULL'], ['?', '?'], ['-', '-']]),
+    Fn.sel('quality.missing.mechanism', 'Missingness pattern', 'Whether blanks are spread randomly or concentrated in one group.', '"Completely at random" (MCAR) = every row equally likely. "Concentrated in a group" (MAR) = rows in the group below are more likely to have blanks (e.g. rural applicants with incomplete forms), which is more realistic and harder to handle.',
+      () => [['MCAR', 'Completely at random (MCAR)'], ['MAR', 'Concentrated in a group (MAR)']]),
+    Fn.sel('quality.missing.groupField', 'Group field (MAR only)', 'Which attribute defines the group with more missing data.', 'Pick a field; then pick the group value below. Ignored when the pattern is "Completely at random".',
+      () => [['city', 'City type'], ['neigh', 'Neighbourhood'], ['region', 'Region'], ['race', 'Race / ethnic group'], ['gender', 'Gender'], ['emp', 'Employment'], ['edu', 'Education'], ['channel', 'Channel'], ['plan', 'Mobile plan']], { rerender: true }),
+    Fn.sel('quality.missing.groupKey', 'Group value (MAR only)', 'The category that gets more missing values.', 'Pick one value of the field chosen above.', () => (CATS[cfg.quality.missing.groupField] || []).map(k => [k, lab(cfg.quality.missing.groupField, k)])),
+    Fn.num('quality.missing.groupMult', 'Group multiplier (MAR only)', 'How many times more likely a row in that group is to have a blank.', 'Number, e.g. 3 = three times as likely. 1 = same as random.', { min: 0, step: 0.5 }),
+    Fn.qcols('quality.missing.cols', COLS.filter(c => c !== 'application_id'), 'Missing values per column (% of rows)', 'Which columns get blanks and how many. application_id is never blanked.', 'Percentage of that column\'s values to remove, e.g. 3 = 3 in 100 rows. 0 or empty = none. Missing values in decision or outcome columns make the data harder to analyse; use with care.'),
+  ] },
+];
+
+// ---------------------------------------------------------------- rendering
+const val = v => typeof v === 'function' ? v() : v;
+function defOf(p) { return getP(DEFAULTS, p); }
+function fmtDef(f) {
+  const d = defOf(f.p);
+  if (d === undefined || d === null) return '';
+  if (typeof d === 'object') return '';
+  if (f.t === 'sel') { const o = val(f.options).find(o => o[0] === d); return o ? o[1] : d; }
+  if (f.t === 'bool') return d ? 'on' : 'off';
+  return d === '' ? '(empty)' : String(d);
+}
+function fieldHTML(f, si, fi) {
+  const id = `f_${si}_${fi}`;
+  const d = fmtDef(f);
+  let body = '';
+  const v = getP(cfg, f.p);
+  if (f.t === 'num') body = `<input type="number" id="${id}" data-p="${f.p}" data-t="num" ${f.min !== undefined ? `min="${f.min}"` : ''} ${f.max !== undefined ? `max="${f.max}"` : ''} step="${f.step || 'any'}" value="${esc(v ?? '')}">`;
+  else if (f.t === 'text') body = `<input type="text" id="${id}" data-p="${f.p}" data-t="text" value="${esc(v ?? '')}">`;
+  else if (f.t === 'bool') body = `<label class="chk"><input type="checkbox" id="${id}" data-p="${f.p}" data-t="bool" ${v ? 'checked' : ''}> Enabled</label>`;
+  else if (f.t === 'sel') body = `<select id="${id}" data-p="${f.p}" data-t="sel" ${f.rerender ? 'data-rerender="1"' : ''}>${val(f.options).map(o => `<option value="${esc(o[0])}" ${o[0] === v ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
+  else if (f.t === 'map') {
+    body = `<div class="grid">${CATS[f.set].map(k => `<label class="cell"><span>${esc(lab(f.set, k))}</span><input type="${f.blankOk ? 'text' : 'number'}" inputmode="decimal" step="any" data-p="${f.p}.${k}" data-t="${f.blankOk ? 'numblank' : 'num'}" ${f.pct ? `data-sum="${f.p}"` : ''} value="${esc(getP(cfg, f.p + '.' + k) ?? '')}" placeholder="${f.blankOk ? 'free' : ''}"></label>`).join('')}</div>${f.pct ? `<div class="sum" data-sumout="${f.p}"></div>` : ''}`;
+  } else if (f.t === 'mat') {
+    const rows = typeof f.rows === 'string' ? rowsOf(f.rows) : f.rows;
+    body = `<div class="tblwrap"><table class="mat"><thead><tr><th></th>${CATS[f.cols].map(k => `<th>${esc(lab(f.cols, k))}</th>`).join('')}${f.pct ? '<th>Total</th>' : ''}</tr></thead><tbody>${rows.map(([rk, rl]) => {
+      const rp = `${f.p}.${rk}`;
+      return `<tr><th>${esc(val(rl))}</th>${CATS[f.cols].map(ck => `<td><input type="number" step="any" data-p="${rp}.${ck}" data-t="num" ${f.pct ? `data-sum="${rp}"` : ''} value="${esc(getP(cfg, rp + '.' + ck) ?? '')}"></td>`).join('')}${f.pct ? `<td class="sum" data-sumout="${rp}"></td>` : ''}</tr>`;
+    }).join('')}</tbody></table></div>`;
+  } else if (f.t === 'list') {
+    body = `<div class="grid small">${f.names.map((n, k) => `<label class="cell"><span>${n}</span><input type="number" step="any" min="0" data-p="${f.p}.${k}" data-t="numidx" value="${esc(getP(cfg, f.p)[k])}"></label>`).join('')}</div>`;
+  } else if (f.t === 'labels') {
+    body = `<div class="grid">${CATS[f.set].map(k => `<label class="cell"><span class="role">${esc(f.roles[k] || '')}</span><input type="text" data-p="${f.p}.${k}" data-t="label" value="${esc(lab(f.set, k))}"></label>`).join('')}</div>`;
+  } else if (f.t === 'qcols') {
+    const m = getP(cfg, f.p) || {};
+    body = `<div class="tblwrap"><table class="qtbl"><thead><tr><th>column</th><th>what it holds</th><th>% of rows</th></tr></thead><tbody>${f.list.map(c => `<tr><td><code>${c}</code></td><td>${esc(COL_DESC[c] || '')}</td><td><input type="number" min="0" max="100" step="any" data-p="${f.p}.${c}" data-t="qcol" value="${esc(m[c] ?? '')}" placeholder="0"></td></tr>`).join('')}</tbody></table></div>`;
+  }
+  const how = f.t === 'labels' ? 'Type a new name for any category; the small text above each box describes that slot\'s role in the default case study. Names must be different from each other within a set. Changes apply everywhere (tables below and the generated data).' : val(f.how);
+  const what = f.t === 'labels' ? 'Names written into the dataset for this field.' : val(f.what);
+  return `<div class="field" data-fi="${fi}"><div class="fhead"><label for="${id}">${esc(val(f.label))}</label><button class="reset" data-reset="${si}:${fi}" title="Restore case-study default">↺ default</button></div>
+    <div class="help"><p><b>What it is:</b> ${esc(what)}</p><p><b>How to enter:</b> ${esc(how)}</p>${d ? `<p class="def">Case-study default: <code>${esc(d)}</code></p>` : ''}</div>${body}</div>`;
+}
+function renderSection(si) {
+  const s = SCHEMA[si];
+  const el = document.getElementById('sec_' + s.id);
+  el.innerHTML = `<h2><span class="num">${si + 1}</span>${esc(s.title)}</h2><p class="intro">${esc(s.intro)}</p>${s.fields.map((f, fi) => fieldHTML(f, si, fi)).join('')}`;
+  updateSums(el);
+}
+function renderAll() {
+  $('#nav').innerHTML = SCHEMA.map((s, si) => `<a href="#sec_${s.id}" data-sec="${s.id}"><span class="num">${si + 1}</span>${esc(s.title)}</a>`).join('');
+  $('#form').innerHTML = SCHEMA.map(s => `<section class="card" id="sec_${s.id}"></section>`).join('');
+  SCHEMA.forEach((_, si) => renderSection(si));
+}
+function updateSums(root) {
+  root.querySelectorAll('[data-sumout]').forEach(o => {
+    const p = o.dataset.sumout; const obj = getP(cfg, p) || {};
+    const s = Object.values(obj).reduce((a, b) => a + (num(b) > 0 ? num(b) : 0), 0);
+    const ok = Math.abs(s - 100) < 0.05;
+    o.textContent = o.tagName === 'TD' ? (Math.round(s * 10) / 10) : (ok ? `Total: ${Math.round(s * 10) / 10}% ✓` : `Total: ${Math.round(s * 10) / 10}% — will be rescaled to 100%`);
+    o.classList.toggle('warn', !ok);
+  });
+}
+
+// ---------------------------------------------------------------- events
+document.addEventListener('change', e => {
+  const t = e.target; if (!t.dataset || !t.dataset.p) return;
+  const p = t.dataset.p, ty = t.dataset.t;
+  if (ty === 'num') setP(cfg, p, t.value === '' ? 0 : parseFloat(t.value));
+  else if (ty === 'numblank') setP(cfg, p, t.value.trim() === '' ? '' : (Number.isFinite(parseFloat(t.value)) ? parseFloat(t.value) : ''));
+  else if (ty === 'numidx') { const ks = p.split('.'); const k = parseInt(ks.pop(), 10); getP(cfg, ks.join('.'))[k] = t.value === '' ? 0 : parseFloat(t.value); }
+  else if (ty === 'text' || ty === 'sel') setP(cfg, p, t.value);
+  else if (ty === 'bool') setP(cfg, p, t.checked);
+  else if (ty === 'qcol') { const v = parseFloat(t.value); setP(cfg, p, Number.isFinite(v) ? v : 0); }
+  else if (ty === 'label') {
+    const v = t.value.trim();
+    const set = p.split('.')[1];
+    const others = CATS[set].filter(k => k !== p.split('.')[2]).map(k => lab(set, k));
+    if (!v || others.includes(v)) { toast(!v ? 'A label cannot be empty.' : 'Each label in a set must be unique.'); t.value = getP(cfg, p); return; }
+    setP(cfg, p, v); saveDraft(); renderAll(); return;
+  }
+  if (ty === 'sel' && t.dataset.rerender) {
+    if (p === 'quality.missing.groupField') cfg.quality.missing.groupKey = CATS[t.value][CATS[t.value].length - 1];
+    const si = SCHEMA.findIndex(s => s.fields.some(f => f.p === p)); renderSection(si);
+  }
+  saveDraft(); updateSums(t.closest('section') || document);
+});
+document.addEventListener('input', e => {
+  const t = e.target; if (t.dataset && t.dataset.sum) { const v = parseFloat(t.value); setP(cfg, t.dataset.p, Number.isFinite(v) ? v : 0); updateSums(t.closest('.field')); }
+});
+document.addEventListener('click', e => {
+  const r = e.target.closest('[data-reset]');
+  if (r) {
+    const [si, fi] = r.dataset.reset.split(':').map(Number); const f = SCHEMA[si].fields[fi];
+    setP(cfg, f.p, clone(defOf(f.p)));
+    saveDraft(); if (f.t === 'labels') renderAll(); else renderSection(si);
+    toast('Restored default: ' + val(f.label));
+    return;
+  }
+  const tab = e.target.closest('[data-view]'); if (tab) { showView(tab.dataset.view); return; }
+  const rt = e.target.closest('[data-rtab]'); if (rt) { showRTab(rt.dataset.rtab); return; }
+  const dl = e.target.closest('[data-dl]'); if (dl) { download(dl.dataset.dl); return; }
+  const nav = e.target.closest('#nav a'); if (nav) { e.preventDefault(); const el = document.getElementById('sec_' + nav.dataset.sec); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+});
+$('#btnGen').addEventListener('click', runGenerate);
+$('#btnReset').addEventListener('click', () => { $('#confirm').hidden = false; });
+$('#cfNo').addEventListener('click', () => { $('#confirm').hidden = true; });
+$('#cfYes').addEventListener('click', () => { cfg = clone(DEFAULTS); saveDraft(); renderAll(); $('#confirm').hidden = true; toast('All settings restored to the case-study defaults.'); });
+$('#fileIn').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { const j = JSON.parse(await f.text()); cfg = mergeDeep(clone(DEFAULTS), j.settings || j); saveDraft(); renderAll(); toast('Settings loaded from ' + f.name); }
+  catch (err) { toast('Could not read that file: it must be a settings .json saved from this tool.'); }
+  e.target.value = '';
+});
+
+function showView(v) {
+  document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
+  $('#viewSettings').hidden = v !== 'settings'; $('#viewResults').hidden = v !== 'results';
+  window.scrollTo(0, 0);
+}
+function showRTab(t) {
+  document.querySelectorAll('[data-rtab]').forEach(b => b.classList.toggle('on', b.dataset.rtab === t));
+  document.querySelectorAll('.rpane').forEach(p => p.hidden = p.id !== 'r_' + t);
+}
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3500); }
+
+// ---------------------------------------------------------------- generate
+function preflight() {
+  const w = [];
+  if (num(cfg.pop.age.min) >= num(cfg.pop.age.max)) w.push('Minimum age must be below maximum age.');
+  if (num(cfg.income.min) >= num(cfg.income.max)) w.push('Minimum income must be below maximum income.');
+  if (num(cfg.loan.min) >= num(cfg.loan.max)) w.push('Minimum loan must be below maximum loan.');
+  if (num(cfg.credit.scoreMin) >= num(cfg.credit.scoreMax)) w.push('Minimum credit score must be below the maximum.');
+  if (num(cfg.basics.n) < 100 || num(cfg.basics.n) > 200000) w.push('Number of applications must be between 100 and 200,000.');
+  if (num(cfg.review.expMin) > num(cfg.review.expMax)) w.push('Least analyst experience must not exceed most experience.');
+  return w;
+}
+function runGenerate() {
+  const pf = preflight();
+  if (pf.length) { toast(pf[0]); return; }
+  const b = $('#btnGen'); b.disabled = true; b.textContent = 'Generating…';
+  setTimeout(() => {
+    try {
+      const t0 = performance.now();
+      const run = clone(cfg);
+      const clean = generate(run);
+      const q = injectQuality(clean, run);
+      const rep = buildReport(clean, q, run, clean.meta);
+      last = { cfg: run, clean, q, rep, ms: performance.now() - t0 };
+      renderResults(); showView('results');
+    } catch (err) { console.error(err); toast('Generation failed: ' + err.message); }
+    b.disabled = false; b.textContent = 'Generate dataset';
+  }, 30);
+}
+
+function tableHTML(t) {
+  return `${t.title ? `<h4>${esc(t.title)}</h4>` : ''}<div class="tblwrap"><table class="rt"><thead><tr>${t.columns.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r => `<tr>${r.map(v => `<td class="${v === 'FAIL' || v === 'NO' ? 'bad' : v === 'PASS' ? 'good' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function renderResults() {
+  const { cfg: c, clean, q, rep, ms } = last; const C = clean.cols, N = clean.n;
+  $('#noRes').hidden = true; $('#resBody').hidden = false;
+  const approved = C.approval_decision.filter(v => v === 'Approved').length;
+  const dirs = {}; C.applicant_race.forEach((r, i) => dirs[r] = C.disparate_impact_ratio[i]);
+  const minDir = Object.entries(dirs).sort((a, b) => a[1] - b[1])[0];
+  const ap = C.default_within_12m.filter(v => v !== 'N/A'); const dr = ap.filter(v => v === 'Yes').length / Math.max(1, ap.length);
+  const fails = rep.checks.filter(x => !x.ok).length;
+  $('#kpis').innerHTML = [
+    ['Rows', N.toLocaleString('en-US')], ['Approval rate', (100 * approved / N).toFixed(1) + '%'], ['Lowest DIR', `${minDir[1].toFixed(2)} <small>${esc(minDir[0])}</small>`],
+    ['Default rate', (100 * dr).toFixed(1) + '%'], ['Cells changed', q.log.length.toLocaleString('en-US')], ['Checks', fails ? `<span class="badtxt">${fails} failed</span>` : 'all passed'],
+  ].map(([k, v]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+  $('#warn').innerHTML = clean.meta.warnings.map(w => `<div class="warnbox">⚠ ${esc(w)}</div>`).join('');
+  $('#meta').textContent = `Generated in ${(ms / 1000).toFixed(1)} s · seed ${c.basics.seed} · ${COLS.length} columns`;
+  // preview
+  const P = Math.min(100, N);
+  const marked = new Set(q.log.map(r => r[0] + '|' + r[1]));
+  $('#r_preview').innerHTML = `<p class="note">First ${P} rows of the dataset <b>with issues</b>. Injected outliers are highlighted in gold, injected missing cells in teal.</p><div class="tblwrap preview"><table class="rt"><thead><tr>${COLS.map(k => `<th>${k}</th>`).join('')}</tr></thead><tbody>${Array.from({ length: P }, (_, i) => `<tr>${COLS.map(k => {
+    const v = q.cols[k][i]; const m = marked.has(C.application_id[i] + '|' + k);
+    if (v === MISSING) return `<td class="miss">${esc(q.marker || '∅')}</td>`;
+    return `<td class="${m ? 'outl' : ''}">${v === null ? '' : esc(v)}</td>`;
+  }).join('')}</tr>`).join('')}</tbody></table></div>`;
+  $('#r_report').innerHTML = rep.sections.map((s, k) => `<div class="card"><h3><span class="num">${k + 1}</span>${esc(s.title)}</h3>${s.notes.map(n => `<p class="note">${esc(n)}</p>`).join('')}${s.tables.map(tableHTML).join('')}</div>`).join('');
+  showRTab('report');
+}
+
+// ---------------------------------------------------------------- downloads
+function fileBase() { const c = last ? last.cfg : cfg; return `${(c.basics.idPrefix || 'dataset').replace(/\W+/g, '')}_credit_scoring_${c.basics.year}`; }
+function download(kind) {
+  if (kind === 'settings') return saveFile(fileBase() + '_settings.json', JSON.stringify({ tool: 'Synthetic credit-scoring dataset generator', version: 1, settings: cfg }, null, 2));
+  if (!last) { toast('Generate a dataset first.'); return; }
+  const b = fileBase();
+  if (kind === 'data') return saveFile(b + '.csv', toCSV(last.q, last.q.marker));
+  if (kind === 'clean') return saveFile(b + '_clean.csv', toCSV(last.clean));
+  if (kind === 'log') return saveFile(b + '_anomaly_log.csv', logCSV(last.q.log));
+  if (kind === 'report') return saveFile(b + '_report.md', reportMarkdown(last.rep, last.cfg, last.clean.meta));
+}
+async function saveFile(name, text) {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  if (window.claude && typeof window.claude.use === 'function') {
+    let d = null; try { d = await window.claude.use('downloads'); } catch (e) { d = null; }
+    if (!d) { toast('Downloads are not available in this view. Open the page in claude.ai to download.'); return; }
+    try { await d.save({ filename: name, data: blob }); toast('Saved ' + name); }
+    catch (e) { toast(e && e.code === 'declined' ? 'Download cancelled.' : 'Download failed: ' + ((e && (e.message || e.code)) || 'unknown error')); }
+    return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); toast('Saved ' + name);
+}
+
+renderAll();
+
+</script>
+</body>
+</html>
